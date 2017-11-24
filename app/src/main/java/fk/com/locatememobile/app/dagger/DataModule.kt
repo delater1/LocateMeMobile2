@@ -13,11 +13,14 @@ import fk.com.locatememobile.app.data.ServerRepository
 import fk.com.locatememobile.app.data.RoomDatabase
 import fk.com.locatememobile.app.data.rest.endpoints.LocationEndpoint
 import fk.com.locatememobile.app.data.rest.endpoints.UserEndpoint
+import okhttp3.OkHttpClient
 import retrofit2.CallAdapter
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.sql.Time
+import java.util.concurrent.TimeUnit
 
 import javax.inject.Singleton
 
@@ -46,11 +49,18 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(converter: Converter.Factory, callAdapter: CallAdapter.Factory): Retrofit {
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder().readTimeout(60, TimeUnit.SECONDS).connectTimeout(10, TimeUnit.SECONDS).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(okHttpClient: OkHttpClient, converter: Converter.Factory, callAdapter: CallAdapter.Factory): Retrofit {
         return Retrofit.Builder()
                 .baseUrl(Constants.SERVER_URL)
                 .addConverterFactory(converter)
                 .addCallAdapterFactory(callAdapter)
+                .client(okHttpClient)
                 .build()
     }
 

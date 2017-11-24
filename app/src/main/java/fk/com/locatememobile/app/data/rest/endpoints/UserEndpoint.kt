@@ -1,5 +1,6 @@
 package fk.com.locatememobile.app.data.rest.endpoints
 
+import fk.com.locatememobile.app.data.entities.User
 import fk.com.locatememobile.app.data.rest.services.UserService
 
 /**
@@ -13,4 +14,7 @@ class UserEndpoint(val userService: UserService) {
 
     fun getUsers() =
             userService.getUsers()
+
+    fun createNewUser(user: User) =
+            userService.addUser(user)
 }

@@ -13,6 +13,7 @@ import io.reactivex.ObservableOnSubscribe
  * Created by korpa on 29.10.2017.
  */
 class FusedLocationWrapper(applicationContext: Context, private var fused: FusedLocationProviderClient = FusedLocationProviderClient(applicationContext)) : ObservableOnSubscribe<LocationResult> {
+    private val TAG = this::class.java.simpleName
     private lateinit var observableEmitter: ObservableEmitter<LocationResult>
     lateinit var locationCallback: LocationCallback
 
@@ -38,12 +39,12 @@ class FusedLocationWrapper(applicationContext: Context, private var fused: Fused
     private fun getLocationCallback(e: ObservableEmitter<LocationResult>): LocationCallback {
         return object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
-                Log.d(ContentValues.TAG, "recieved location update: ${locationResult.lastLocation.latitude}, ${locationResult.lastLocation.longitude}")
+                Log.d(TAG, "recieved location update: ${locationResult.lastLocation.latitude}, ${locationResult.lastLocation.longitude}")
                 e.onNext(locationResult)
             }
 
             override fun onLocationAvailability(locationAvailability: LocationAvailability) {
-                Log.d(ContentValues.TAG, "Location Availability $locationAvailability")
+                Log.d(TAG, "Location Availability $locationAvailability")
             }
         }
     }

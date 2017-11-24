@@ -1,7 +1,6 @@
 package fk.com.locatememobile.app.ui
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.constraint.ConstraintSet
 import android.support.v4.app.Fragment
@@ -11,13 +10,18 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.transitionseverywhere.Fade
 import com.transitionseverywhere.Slide
 import com.transitionseverywhere.TransitionManager
 import fk.com.locatememobile.app.App
 import fk.com.locatememobile.app.data.Repository
+import fk.com.locatememobile.app.data.entities.Location
 import fk.com.locatememobile.app.data.entities.User
 import fk.locateme.app.R
 import kotlinx.android.synthetic.main.fragment_map.*
@@ -29,14 +33,10 @@ class MapFragment : Fragment() {
     var googleMap: GoogleMap? = null
     @Inject
     lateinit var repository: Repository
-    lateinit var model: MapFragmentViewModel
+    @Inject
+    lateinit var model: MapFragmentPresenter
     lateinit var userAdapter: UserAdapter
-    var isDrawerOpen: Boolean = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        model = ViewModelProviders.of(this).get(MapFragmentViewModel::class.java)
-    }
+    private var isDrawerOpen: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -51,8 +51,14 @@ class MapFragment : Fragment() {
         m.getMapAsync({ map ->
             googleMap = map
 //            setMapProperties(googleMap)
+            model.getLoactionObservable().subscribe { l: Location ->
+                run {
+                    googleMap?.addMarker(MarkerOptions().position(LatLng(l.latitude,l.longitude)))
+                    googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(LatLng(l.latitude,l.longitude), 13f)));
+                }
+            }
         })
-        button.setOnClickListener { openCloseBottomDrawer() }
+        button.setOnClickListener{ openCloseBottomDrawer() }
         friend_list_recycler_view.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         userAdapter = UserAdapter()
         friend_list_recycler_view.adapter = userAdapter

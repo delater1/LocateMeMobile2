@@ -15,4 +15,7 @@ interface UserDAO {
 
     @Insert
     fun insert(user: User)
+
+    @Query("SELECT * FROM Users WHERE firstName = :firstName AND lastName = :lastName")
+    fun getUserByFirstNameAndLastName(firstName: String, lastName: String): List<User>
 }

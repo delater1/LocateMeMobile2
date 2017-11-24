@@ -14,6 +14,7 @@ import fk.locateme.app.R
  */
 class UserAdapter : RecyclerView.Adapter<UserViewHolder> {
     val userList: MutableList<User>
+
     constructor() : super() {
         userList = mutableListOf()
     }
@@ -44,11 +45,11 @@ class UserAdapter : RecyclerView.Adapter<UserViewHolder> {
 class UserViewHolder : RecyclerView.ViewHolder {
     constructor(view: View) : super(view) {
         userAvatar = view.findViewById(R.id.user_avatar)
-        userFirstName= view.findViewById(R.id.user_first_name)
+        userFirstName = view.findViewById(R.id.user_first_name)
         userLastName = view.findViewById(R.id.user_last_name)
     }
 
     var userAvatar: ImageView
     var userFirstName: TextView
-    var userLastName:TextView
+    var userLastName: TextView
 }
