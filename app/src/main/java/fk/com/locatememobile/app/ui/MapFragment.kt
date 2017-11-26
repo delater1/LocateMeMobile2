@@ -50,7 +50,7 @@ class MapFragment : Fragment() {
         val m = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         m.getMapAsync({ map ->
             googleMap = map
-//            setMapProperties(googleMap)
+            setMapProperties(googleMap)
             model.getLoactionObservable().subscribe { l: Location ->
                 run {
                     googleMap?.addMarker(MarkerOptions().position(LatLng(l.latitude,l.longitude)))
@@ -66,10 +66,11 @@ class MapFragment : Fragment() {
         Log.d(TAG, repository.toString())
     }
 
+    @SuppressLint("MissingPermission")
     private fun setMapProperties(googleMap: GoogleMap?) {
-        //TODO
-        googleMap?.setMaxZoomPreference(13f)
-        googleMap?.setMinZoomPreference(50f)
+        googleMap?.isMyLocationEnabled = true
+        googleMap?.setMaxZoomPreference(14f)
+        googleMap?.setMinZoomPreference(2f)
     }
 
     private fun openCloseBottomDrawer() {

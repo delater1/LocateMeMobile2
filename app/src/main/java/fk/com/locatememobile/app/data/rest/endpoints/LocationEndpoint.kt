@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by korpa on 22.10.2017.
  */
-class LocationEndpoint(val locationService: LocationService) {
+class LocationEndpoint(private val locationService: LocationService) {
 
     val TAG = this.javaClass.simpleName
 

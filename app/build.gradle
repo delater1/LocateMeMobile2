@@ -40,6 +40,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    api 'com.android.support:design:26.1.0'
     api 'com.squareup.retrofit2:converter-gson:2.3.0'
     api 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     api 'com.google.android.gms:play-services-location:11.6.0'

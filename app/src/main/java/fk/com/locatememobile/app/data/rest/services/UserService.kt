@@ -13,7 +13,7 @@ import retrofit2.http.Path
 interface UserService {
 
     @GET("/user/all")
-    fun getUsers(): Single<Array<User>>
+    fun getUsers(): Single<List<User>>
 
     @GET("/user/{id}")
     fun getUserById(@Path("id") userId: Long): Single<User>

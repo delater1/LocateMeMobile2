@@ -6,11 +6,10 @@ import fk.com.locatememobile.app.data.rest.services.UserService
 /**
  * Created by korpa on 21.10.2017.
  */
-class UserEndpoint(val userService: UserService) {
+class UserEndpoint(private val userService: UserService) {
 
     fun getUserById(id: Long) =
                 userService.getUserById(id)
-
 
     fun getUsers() =
             userService.getUsers()

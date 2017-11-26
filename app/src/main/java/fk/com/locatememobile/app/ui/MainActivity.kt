@@ -25,11 +25,11 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         (application as App).appComponent.inject(this)
         setContentView(R.layout.activity)
-        showMapFragment()
+        showStartingFragment()
         checkPermissionAndStartLocationService()
     }
 
-    private fun showMapFragment() {
+    private fun showStartingFragment() {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.mainFrame, LoginFragment())
         fragmentTransaction.commit()

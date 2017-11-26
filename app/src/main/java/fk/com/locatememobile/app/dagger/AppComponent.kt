@@ -2,10 +2,7 @@ package fk.com.locatememobile.app.dagger
 
 import dagger.Component
 import fk.com.locatememobile.app.device.Core
-import fk.com.locatememobile.app.ui.LoginFragment
-import fk.com.locatememobile.app.ui.MainActivity
-import fk.com.locatememobile.app.ui.MapFragment
-import fk.com.locatememobile.app.ui.MapFragmentPresenter
+import fk.com.locatememobile.app.ui.*
 import javax.inject.Singleton
 
 /**
@@ -19,4 +16,5 @@ interface AppComponent {
     fun inject(target: Core)
     fun inject(target: MapFragmentPresenter)
     fun inject(target: LoginFragment)
+    fun inject(target: FriendsSelectionFragment)
 }

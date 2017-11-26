@@ -1,16 +1,14 @@
 package fk.com.locatememobile.app.ui
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import fk.com.locatememobile.app.App
 import fk.locateme.app.R
-
 import kotlinx.android.synthetic.main.fragment_login.*
-import java.time.Duration
 import javax.inject.Inject
 
 class LoginFragment : Fragment(), LoginFragmentContract.View {
@@ -40,7 +38,9 @@ class LoginFragment : Fragment(), LoginFragmentContract.View {
     fun showLoading() {
         login_fragment_progress_bar.visibility = View.VISIBLE
         login_fragment_first_name_edit_text.isFocusable = false
+        login_fragment_first_name_edit_text.isFocusableInTouchMode = false
         login_fragment_last_name_edit_text.isFocusable = false
+        login_fragment_last_name_edit_text.isFocusableInTouchMode = false
         login_fragment_log_in_button.isEnabled = false
     }
 
@@ -51,20 +51,22 @@ class LoginFragment : Fragment(), LoginFragmentContract.View {
 
     private fun showMapFragment() {
         val fragmentTransaction = activity.supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.mainFrame, MapFragment())
+        fragmentTransaction.replace(R.id.mainFrame, FriendsSelectionFragment())
         fragmentTransaction.commit()
     }
 
     private fun hideLoading() {
         login_fragment_progress_bar.visibility = View.GONE
         login_fragment_first_name_edit_text.isFocusable = true
+        login_fragment_first_name_edit_text.isFocusableInTouchMode = true
         login_fragment_last_name_edit_text.isFocusable = true
+        login_fragment_last_name_edit_text.isFocusableInTouchMode = true
         login_fragment_log_in_button.isEnabled = true
     }
 
     override fun onLogInError() {
         hideLoading()
-        Toast.makeText(this.activity, "Something went wrong could login", Toast.LENGTH_LONG).show()
+        Snackbar.make(login_fragment_main_view, "Something went wrong could not login", Snackbar.LENGTH_LONG).show()
     }
 
 }

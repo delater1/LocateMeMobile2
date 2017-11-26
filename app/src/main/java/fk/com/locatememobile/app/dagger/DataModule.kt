@@ -13,6 +13,7 @@ import fk.com.locatememobile.app.data.ServerRepository
 import fk.com.locatememobile.app.data.RoomDatabase
 import fk.com.locatememobile.app.data.rest.endpoints.LocationEndpoint
 import fk.com.locatememobile.app.data.rest.endpoints.UserEndpoint
+import fk.com.locatememobile.app.data.rest.endpoints.UserFriendsEndpoint
 import okhttp3.OkHttpClient
 import retrofit2.CallAdapter
 import retrofit2.Converter
@@ -96,8 +97,14 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideServerRepository(userEndpoint: UserEndpoint, locationEndpoint: LocationEndpoint): ServerRepository {
-        return ServerRepository(userEndpoint, locationEndpoint)
+    fun provideUserFriendsEndpoint(userFriendsService: UserFriendsService): UserFriendsEndpoint {
+        return UserFriendsEndpoint(userFriendsService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideServerRepository(userEndpoint: UserEndpoint, locationEndpoint: LocationEndpoint, userFriendsEndpoint: UserFriendsEndpoint): ServerRepository {
+        return ServerRepository(userEndpoint, locationEndpoint, userFriendsEndpoint)
     }
 
     @Provides

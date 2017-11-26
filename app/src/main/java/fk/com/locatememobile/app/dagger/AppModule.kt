@@ -7,9 +7,7 @@ import dagger.Provides
 import fk.com.locatememobile.app.data.Repository
 import fk.com.locatememobile.app.device.Core
 import fk.com.locatememobile.app.device.LocationSubscriptionStateListener
-import fk.com.locatememobile.app.ui.LoginFragmentContract
-import fk.com.locatememobile.app.ui.LoginFragmentPresenter
-import fk.com.locatememobile.app.ui.MapFragmentPresenter
+import fk.com.locatememobile.app.ui.*
 import javax.inject.Singleton
 
 /**
@@ -47,4 +45,9 @@ class AppModule(val application: Application) {
         return LoginFragmentPresenter(core)
     }
 
+    @Provides
+    @Singleton
+    fun provideFriendsSelectionFragment(core: Core): FriendsSelectionContract.Presenter {
+        return FriendsSelectionPresenter(core)
+    }
 }
