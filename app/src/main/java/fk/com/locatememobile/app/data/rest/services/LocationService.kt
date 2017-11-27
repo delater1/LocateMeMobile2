@@ -14,9 +14,11 @@ import retrofit2.http.Path
  */
 interface LocationService {
     @GET("user/{userId}/location")
-    fun getUserLocations(@Path("userId") userId:Long): Observable<List<Location>>
-
+    fun getUserLocations(@Path("userId") userId: Long): Observable<List<Location>>
 
     @POST("user/{userId}/location")
     fun addLocationForUser(@Path("userId") userId: Long, @Body location: Location): Completable
+
+    @GET("ser/{userId}/location/lastFriendsLocations")
+    fun getUserFriendsLastLocations(@Path("userId") userId: Long): Observable<List<Location>>
 }

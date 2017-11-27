@@ -2,8 +2,10 @@ package fk.com.locatememobile.app.ui
 
 import android.content.Context
 import fk.com.locatememobile.app.data.entities.Location
+import fk.com.locatememobile.app.data.entities.User
 import fk.com.locatememobile.app.device.Core
 import fk.com.locatememobile.app.device.UserLocationUpdatesReceiver
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -13,8 +15,9 @@ import javax.inject.Inject
 /**
  * Created by korpa on 06.11.2017.
  */
-class MapFragmentPresenter : UserLocationUpdatesReceiver {
+class MapFragmentPresenter : UserLocationUpdatesReceiver, MapFragmentContract.Presenter {
     var applicationContext: Context
+
     var observableEmitter: ObservableEmitter<Location>? = null
     var core: Core
 
@@ -29,9 +32,12 @@ class MapFragmentPresenter : UserLocationUpdatesReceiver {
         observableEmitter?.onNext(location)
     }
 
-
-    fun getLoactionObservable(): Observable<Location> {
+    override fun getLocationObservable(): Observable<Location> {
         return Observable.create<Location> { e: ObservableEmitter<Location> -> observableEmitter = e }
                 .subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun getUserFriends(): Flowable<List<User>> {
+        return core.getUserFriendsFromDb()
     }
 }

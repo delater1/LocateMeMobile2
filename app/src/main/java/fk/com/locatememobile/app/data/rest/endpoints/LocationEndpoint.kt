@@ -21,9 +21,9 @@ class LocationEndpoint(private val locationService: LocationService) {
     fun getLocationsSubscrition(userId: Long): Observable<List<Location>> {
         return Observable.interval(Constants.LOCATIONS_FROM_SERVER_INTERVAL, TimeUnit.SECONDS)
                 .startWith(0)
-                .flatMap { locationService.getUserLocations(userId) }
+                .flatMap { locationService.getUserFriendsLastLocations(userId) }
                 .repeat()
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 

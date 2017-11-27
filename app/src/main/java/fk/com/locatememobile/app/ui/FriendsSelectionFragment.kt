@@ -11,7 +11,10 @@ import fk.com.locatememobile.app.App
 import fk.com.locatememobile.app.data.entities.User
 import fk.locateme.app.R
 import io.reactivex.Single
+import io.reactivex.SingleEmitter
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_friends_selection.*
 import javax.inject.Inject
 
@@ -37,7 +40,10 @@ class FriendsSelectionFragment : Fragment(), FriendsSelectionContract.View {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         friends_selection_forward_button.setOnClickListener(getOnForwardClickListener())
-        getAllUsersAsync().subscribe(
+        getAllUsersAsync()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
                 { res: Pair<List<User>, List<User>> ->
                     userFriendsAdapter = UserFriendsAdapter(context, res.first, res.second)
                     friends_selection_fragment_list_view.adapter = userFriendsAdapter
@@ -55,7 +61,20 @@ class FriendsSelectionFragment : Fragment(), FriendsSelectionContract.View {
     }
 
     private fun getAllUsersAsync(): Single<Pair<List<User>, List<User>>> {
-        return Single.zip(presenter.getUsers(), presenter.getUserFriends(), BiFunction { x, y -> Pair(x, y) })
+        return Single.create { singleEmitter: SingleEmitter<Pair<List<User>, List<User>>> ->
+            presenter.getUsers().subscribe(
+                    { userList: List<User> ->
+                        presenter.getUserFriends().subscribe({ userFriendsList: List<User> ->
+                            singleEmitter.onSuccess(Pair(userList, userFriendsList))
+                        }, { error: Throwable ->
+                            singleEmitter.onError(error)
+                        })
+                    },
+                    { error: Throwable ->
+                        singleEmitter.onError(error)
+                    }
+            )
+        }
     }
 
     override fun getSelectedUserFriends(): List<User>? {

@@ -48,7 +48,14 @@ class Core : LocationSubscriptionStateListener, UserLocationUpdatesReceiver {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribe(
                     { user: User ->
+                        repository.deleteAllDataFromDb()
                         loggedInUser = user
+                        Completable.fromCallable({
+                            repository.roomDatabase.userDao().insert(user)
+                        })
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe()
                         completableEmitter.onComplete()
                     },
                     { error: Throwable ->
@@ -57,6 +64,13 @@ class Core : LocationSubscriptionStateListener, UserLocationUpdatesReceiver {
                     }
             )
         }
+    }
+
+    fun getUserFriendsFromDb(): Flowable<List<User>> {
+        loggedInUser?.let {
+            return repository.roomDatabase.userFriendsDao().getUserFriends(it.id)
+        }
+        return Flowable.error({Throwable("User not logged in")})
     }
 
     fun getUsers(): Single<List<User>> {
@@ -68,8 +82,11 @@ class Core : LocationSubscriptionStateListener, UserLocationUpdatesReceiver {
                             { userList: List<User> ->
                                 Observable.just(repository)
                                         .subscribeOn(Schedulers.io())
-                                        .subscribe { repository -> repository.roomDatabase.userDao().insert(userList) }
-                                singleEmitter.onSuccess(userList)
+                                        .subscribe { repository ->
+                                            val i = 0
+                                            repository.roomDatabase.userDao().insert(userList)
+                                            singleEmitter.onSuccess(userList)
+                                        }
                             },
                             { error: Throwable ->
                                 singleEmitter.onError(error)
@@ -88,8 +105,10 @@ class Core : LocationSubscriptionStateListener, UserLocationUpdatesReceiver {
                             { userList: List<User> ->
                                 Observable.just(repository)
                                         .subscribeOn(Schedulers.io())
-                                        .subscribe { repository -> repository.roomDatabase.userFriendsDao().insertUserFriends(convertToUserFriendsRoomList(loggedInUser, userList)) }
-                                singleEmitter.onSuccess(userList)
+                                        .subscribe { repository ->
+                                            //                                            repository.roomDatabase.userFriendsDao().insertUserFriends(convertToUserFriendsRoomList(loggedInUser, userList))
+                                            singleEmitter.onSuccess(userList)
+                                        }
                             },
                             { error: Throwable ->
                                 singleEmitter.onError(error)
@@ -99,12 +118,6 @@ class Core : LocationSubscriptionStateListener, UserLocationUpdatesReceiver {
         }
     }
 
-    private fun convertToUserFriendsRoomList(loggedInUser: User?, userList: List<User>): List<UserFriend> {
-        loggedInUser?.let {
-            return userList.map { user -> UserFriend(loggedInUser.id, user.id) }
-        }
-        return listOf()
-    }
 
     private fun getUserFriendsSingle(): Single<List<User>> {
         loggedInUser?.let {
@@ -116,7 +129,8 @@ class Core : LocationSubscriptionStateListener, UserLocationUpdatesReceiver {
     fun postNewFriendsUserList(selectedUserFriends: List<User>?): Completable {
         selectedUserFriends?.let {
             loggedInUser?.let {
-                return repository.serverRepository.userFriendsEndpoint.postUserFriends(it, selectedUserFriends)
+                return repository
+                        .addNewUserFriends(it, selectedUserFriends)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
             }

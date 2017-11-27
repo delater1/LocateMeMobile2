@@ -1,6 +1,7 @@
 package fk.com.locatememobile.app.data.databaseAccessObjects
 
 import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import fk.com.locatememobile.app.data.entities.Location
@@ -15,4 +16,7 @@ interface LocationDAO {
 
     @Insert
     fun insert(location: Location)
+
+    @Query("DELETE FROM Locations")
+    fun deleteAllLocations()
 }

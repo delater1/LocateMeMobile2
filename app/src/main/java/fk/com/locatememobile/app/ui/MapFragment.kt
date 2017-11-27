@@ -28,13 +28,13 @@ import kotlinx.android.synthetic.main.fragment_map.*
 import javax.inject.Inject
 
 
-class MapFragment : Fragment() {
+class MapFragment : Fragment(), MapFragmentContract.View {
     val TAG = this::class.java.simpleName
     var googleMap: GoogleMap? = null
     @Inject
     lateinit var repository: Repository
     @Inject
-    lateinit var model: MapFragmentPresenter
+    lateinit var presenter: MapFragmentContract.Presenter
     lateinit var userAdapter: UserAdapter
     private var isDrawerOpen: Boolean = false
 
@@ -51,18 +51,23 @@ class MapFragment : Fragment() {
         m.getMapAsync({ map ->
             googleMap = map
             setMapProperties(googleMap)
-            model.getLoactionObservable().subscribe { l: Location ->
-                run {
-                    googleMap?.addMarker(MarkerOptions().position(LatLng(l.latitude,l.longitude)))
-                    googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(LatLng(l.latitude,l.longitude), 13f)));
-                }
-            }
+            presenter.getLocationObservable().subscribe({ l: Location ->
+                googleMap?.addMarker(MarkerOptions().position(LatLng(l.latitude, l.longitude)))
+                googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(LatLng(l.latitude, l.longitude), 13f)));
+
+            })
         })
-        button.setOnClickListener{ openCloseBottomDrawer() }
+        button.setOnClickListener { openCloseBottomDrawer() }
         friend_list_recycler_view.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         userAdapter = UserAdapter()
         friend_list_recycler_view.adapter = userAdapter
-        userAdapter.addUsers(mutableListOf(User(1, "Filip", "Korpalski"), User(2, "Kalina", "Tabała")))
+        presenter.getUserFriends().subscribe({ userFriends: List<User> ->
+            userAdapter.addUsers(userFriends)
+        },
+                { error: Throwable ->
+                    Log.e(TAG, error.message)
+                }
+        )
         Log.d(TAG, repository.toString())
     }
 
@@ -104,4 +109,5 @@ class MapFragment : Fragment() {
         TransitionManager.beginDelayedTransition(main_map_fragment, Slide(Gravity.BOTTOM))
         constraintSet.applyTo(main_map_fragment)
     }
+
 }

@@ -10,6 +10,7 @@ import javax.inject.Inject
  * Created by korpa on 23.11.2017.
  */
 class FriendsSelectionPresenter : FriendsSelectionContract.Presenter {
+    val TAG = javaClass.simpleName
     val core: Core
 
     var view: FriendsSelectionContract.View? = null
@@ -34,8 +35,8 @@ class FriendsSelectionPresenter : FriendsSelectionContract.Presenter {
     override fun onForwardClicked() {
         view?.let {
             core.postNewFriendsUserList(it.getSelectedUserFriends()).subscribe(
-                    { view?.showMapFragment()},
-                    { e: Throwable -> Log.e("er", "error") })
+                    { view?.showMapFragment() },
+                    { e: Throwable -> Log.e(TAG, e.message) })
         }
     }
 }

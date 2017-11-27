@@ -35,7 +35,7 @@ class AppModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun provideMapFragmentPresenter(applicationContext: Context, core: Core): MapFragmentPresenter {
+    fun provideMapFragmentPresenter(applicationContext: Context, core: Core): MapFragmentContract.Presenter {
         return MapFragmentPresenter(applicationContext, core)
     }
 

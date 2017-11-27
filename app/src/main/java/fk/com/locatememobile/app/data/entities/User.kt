@@ -9,4 +9,5 @@ import android.arch.persistence.room.PrimaryKey
 @Entity(tableName = "Users")
 data class User(@PrimaryKey var id: Long,
                 var firstName: String,
-                var lastName: String)
+                var lastName: String) {
+}

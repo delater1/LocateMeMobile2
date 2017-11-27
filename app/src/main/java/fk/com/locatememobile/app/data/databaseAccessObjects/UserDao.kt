@@ -23,4 +23,7 @@ interface UserDAO {
 
     @Query("SELECT * FROM Users WHERE firstName = :firstName AND lastName = :lastName")
     fun getUserByFirstNameAndLastName(firstName: String, lastName: String): List<User>
+
+    @Query("DELETE FROM Users")
+    fun deleteAllUsers()
 }
