@@ -110,7 +110,7 @@ class DataModule {
     @Provides
     @Singleton
     fun provideRoomDb(context: Context): RoomDatabase {
-        return Room.databaseBuilder(context, RoomDatabase::class.java, "LocateMeDb").build()
+        return Room.databaseBuilder(context, RoomDatabase::class.java, "LocateMeDb").allowMainThreadQueries().build()
     }
 
     @Provides

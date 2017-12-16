@@ -13,9 +13,7 @@ import android.view.ViewGroup
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.transitionseverywhere.Fade
 import com.transitionseverywhere.Slide
 import com.transitionseverywhere.TransitionManager
@@ -28,54 +26,75 @@ import kotlinx.android.synthetic.main.fragment_map.*
 import javax.inject.Inject
 
 
-class MapFragment : Fragment(), MapFragmentContract.View {
+class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     val TAG = this::class.java.simpleName
     var googleMap: GoogleMap? = null
+    var isFirstZoom = true
     @Inject
     lateinit var repository: Repository
     @Inject
     lateinit var presenter: MapFragmentContract.Presenter
     lateinit var userAdapter: UserAdapter
     private var isDrawerOpen: Boolean = false
+    lateinit var userMarkerMap: HashMap<User, Marker>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        (activity.application as App).appComponent.inject(this)
+        presenter.register(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         var view = inflater.inflate(R.layout.fragment_map, container, false)
-        (activity.application as App).appComponent.inject(this)
         return view
     }
 
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         val m = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        userMarkerMap = hashMapOf()
+        getGoogleMap(m)
+        setup()
+        Log.d(TAG, repository.toString())
+        presenter.onViewReady()
+    }
+
+    private fun getGoogleMap(m: SupportMapFragment) {
         m.getMapAsync({ map ->
+            map.clear()
             googleMap = map
             setMapProperties(googleMap)
             presenter.getLocationObservable().subscribe({ l: Location ->
-                googleMap?.addMarker(MarkerOptions().position(LatLng(l.latitude, l.longitude)))
-                googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(LatLng(l.latitude, l.longitude), 13f)));
-
+                animateToUserPositionIfFirstLocation(l)
             })
         })
+    }
+
+    private fun animateToUserPositionIfFirstLocation(l: Location) {
+        if (isFirstZoom) {
+            googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(LatLng(l.latitude, l.longitude), 13f)))
+            isFirstZoom = false
+        }
+    }
+
+    private fun setup() {
         button.setOnClickListener { openCloseBottomDrawer() }
         friend_list_recycler_view.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        userAdapter = UserAdapter()
+        userAdapter = UserAdapter(this)
         friend_list_recycler_view.adapter = userAdapter
-        presenter.getUserFriends().subscribe({ userFriends: List<User> ->
-            userAdapter.addUsers(userFriends)
-        },
-                { error: Throwable ->
-                    Log.e(TAG, error.message)
-                }
-        )
-        Log.d(TAG, repository.toString())
+    }
+
+    override fun onUserFriendsListReceived(userFriendsRes: List<User>) {
+        userAdapter.setUsersWithColors(presenter.getUsersColors())
     }
 
     @SuppressLint("MissingPermission")
     private fun setMapProperties(googleMap: GoogleMap?) {
         googleMap?.isMyLocationEnabled = true
+        googleMap?.uiSettings?.isMapToolbarEnabled = false
         googleMap?.setMaxZoomPreference(14f)
-        googleMap?.setMinZoomPreference(2f)
+        googleMap?.setMinZoomPreference(1f)
     }
 
     private fun openCloseBottomDrawer() {
@@ -108,6 +127,35 @@ class MapFragment : Fragment(), MapFragmentContract.View {
         constraintSet.connect(R.id.bottom_drawer, ConstraintSet.TOP, R.id.button, ConstraintSet.BOTTOM)
         TransitionManager.beginDelayedTransition(main_map_fragment, Slide(Gravity.BOTTOM))
         constraintSet.applyTo(main_map_fragment)
+    }
+
+    override fun displayUpdatedUserLocations(userFriendsLocationMap: Map<User, Location>) {
+        userFriendsLocationMap.forEach { (user, location) ->
+            userMarkerMap[user]?.remove()
+            googleMap?.let {
+                userMarkerMap.put(user, it.addMarker(getMarkerOptions(location, user)))
+            }
+        }
+    }
+
+    private fun getMarkerOptions(location: Location, user: User): MarkerOptions? {
+        return MarkerOptions()
+                .position(LatLng(location.latitude, location.longitude))
+                .title(user.firstName + " " + user.lastName)
+                .icon(BitmapDescriptorFactory.defaultMarker(presenter.getUserMarkerColor(user).markerHue))
+    }
+
+    override fun onUserSelected(user: User) {
+        val location = presenter.getLastUserLocation(user)
+        location?.let {
+            googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(LatLng(it.latitude, it.longitude), 13f)))
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        googleMap?.clear()
+        userMarkerMap.clear()
     }
 
 }

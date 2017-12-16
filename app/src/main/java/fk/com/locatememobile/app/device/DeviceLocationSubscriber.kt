@@ -15,10 +15,10 @@ import io.reactivex.disposables.Disposable
 /**
  * Created by korpa on 30.10.2017.
  */
-class DeviceLocationSubscriber(val applicationContext: Context, val user: User, val userLocationUpdatesReceiver: UserLocationUpdatesReceiver) {
+class DeviceLocationSubscriber(val applicationContext: Context, val user: User, var userLocationUpdatesReceiver: UserLocationUpdatesReceiver?) {
     private val TAG = javaClass.simpleName
 
-    fun bindToLocationService() {
+    fun bindToLocationService(): DeviceLocationSubscriber {
         val intent = Intent(applicationContext, LocationResultService::class.java)
         applicationContext.bindService(intent, object : ServiceConnection {
             override fun onServiceDisconnected(p0: ComponentName?) {
@@ -40,12 +40,13 @@ class DeviceLocationSubscriber(val applicationContext: Context, val user: User, 
 
                         override fun onNext(locationResult: LocationResult) {
                             Log.d(TAG, "update ${locationResult.lastLocation.longitude}")
-                            userLocationUpdatesReceiver.onUserLocationUpdate(convert(locationResult))
+                            userLocationUpdatesReceiver?.onUserLocationUpdate(convert(locationResult))
                         }
                     })
                 }
             }
         }, Context.BIND_AUTO_CREATE)
+        return this
     }
 
     private fun convert(locationResult: LocationResult): Location {

@@ -13,25 +13,24 @@ import fk.locateme.app.R
  * Created by korpa on 20.11.2017.
  */
 class UserAdapter : RecyclerView.Adapter<UserViewHolder> {
-    val userList: MutableList<User>
+    val userSelectedListener: UserSelectedListener
+    var userColorList: List<Pair<User, MarkerColors>>
 
-    constructor() : super() {
-        userList = mutableListOf()
+    constructor(userSelectedListener: UserSelectedListener) : super() {
+        userColorList = listOf()
+        this.userSelectedListener = userSelectedListener
     }
 
-    fun addUser(user: User) {
-        userList.add(user)
-        notifyDataSetChanged()
-    }
-
-    fun addUsers(users: List<User>) {
-        userList.addAll(users)
+    fun setUsersWithColors(usersWithColors: List<Pair<User,MarkerColors>>) {
+        userColorList = usersWithColors
         notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        holder.userFirstName.text = userList[position].firstName
-        holder.userLastName.text = userList[position].lastName
+        holder.userFirstName.text = userColorList[position].first.firstName
+        holder.userLastName.text = userColorList[position].first.lastName
+        holder.userAvatar.setColorFilter(userColorList[position].second.color)
+        holder.itemView.setOnClickListener({ userSelectedListener.onUserSelected(userColorList[position].first) })
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
@@ -39,7 +38,7 @@ class UserAdapter : RecyclerView.Adapter<UserViewHolder> {
         return UserViewHolder(userView)
     }
 
-    override fun getItemCount() = userList.size
+    override fun getItemCount() = userColorList.size
 }
 
 class UserViewHolder : RecyclerView.ViewHolder {
@@ -53,3 +52,5 @@ class UserViewHolder : RecyclerView.ViewHolder {
     var userFirstName: TextView
     var userLastName: TextView
 }
+
+

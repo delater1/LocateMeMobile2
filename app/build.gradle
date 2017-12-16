@@ -22,6 +22,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "8g"
+    }
 }
 
 dependencies {
@@ -31,7 +35,7 @@ dependencies {
     implementation 'com.android.support:support-v4:26.1.0'
     testImplementation 'junit:junit:4.12'
     api "com.andkulikov:transitionseverywhere:1.7.7"
-    api 'com.google.android.gms:play-services-maps:11.6.0'
+    api 'com.google.android.gms:play-services-maps:11.4.2'
     api 'android.arch.persistence.room:runtime:1.0.0'
     kapt "android.arch.persistence.room:compiler:1.0.0"
     implementation "android.arch.lifecycle:extensions:1.0.0"
@@ -43,7 +47,7 @@ dependencies {
     api 'com.android.support:design:26.1.0'
     api 'com.squareup.retrofit2:converter-gson:2.3.0'
     api 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
-    api 'com.google.android.gms:play-services-location:11.6.0'
+    api 'com.google.android.gms:play-services-location:11.4.2'
     api 'io.reactivex.rxjava2:rxjava:2.0.6'
     api 'io.reactivex.rxjava2:rxandroid:2.0.1'
     api 'com.google.dagger:dagger:2.12'

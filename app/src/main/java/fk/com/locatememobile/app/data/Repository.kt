@@ -4,10 +4,8 @@ import android.util.Log
 import fk.com.locatememobile.app.data.entities.Location
 import fk.com.locatememobile.app.data.entities.User
 import fk.com.locatememobile.app.data.entities.UserFriend
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.SingleEmitter
+import fk.com.locatememobile.app.data.rest.services.LocationDTO
+import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -35,12 +33,18 @@ class Repository(val serverRepository: ServerRepository, val roomDatabase: RoomD
         }
     }
 
-    fun getLocationsInLast5min(userId: Long) {
-        //TODO
+    fun getUserLocationsSubscription(userId: Long): Observable<List<Location>> {
+        return Observable.create<List<Location>> { observableEmitter: ObservableEmitter<List<Location>> ->
+            serverRepository.locationEndpoint.getLocationDTOSubscrition(userId).subscribe(
+                    { res: List<LocationDTO> -> observableEmitter.onNext(convert(res)) },
+                    { error: Throwable -> observableEmitter.onError(error) },
+                    { observableEmitter.onComplete() }
+            )
+        }
     }
 
-    fun getLocationSubscription(userId: Long): Observable<List<Location>> {
-        return serverRepository.locationEndpoint.getLocationsSubscrition(userId)
+    fun convert(locationDTO: List<LocationDTO>): List<Location> {
+        return locationDTO.map { locationDTO -> Location(locationDTO.id, locationDTO.user.id, locationDTO.time, locationDTO.latitude, locationDTO.longitude) }
     }
 
     fun deleteAllDataFromDb() {

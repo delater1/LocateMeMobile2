@@ -19,6 +19,6 @@ interface LocationService {
     @POST("user/{userId}/location")
     fun addLocationForUser(@Path("userId") userId: Long, @Body location: Location): Completable
 
-    @GET("ser/{userId}/location/lastFriendsLocations")
-    fun getUserFriendsLastLocations(@Path("userId") userId: Long): Observable<List<Location>>
+    @GET("user/{userId}/location/lastFriendsLocations")
+    fun getUserFriendsLastLocations(@Path("userId") userId: Long): Observable<List<LocationDTO>>
 }

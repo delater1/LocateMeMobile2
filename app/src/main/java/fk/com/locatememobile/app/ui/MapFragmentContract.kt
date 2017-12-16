@@ -12,10 +12,18 @@ import io.reactivex.Observable
 
 interface MapFragmentContract {
     interface View {
+        fun onUserFriendsListReceived(userFriendsRes: List<User>)
+        fun displayUpdatedUserLocations(userFriendsLocationMap: Map<User, Location>)
     }
 
     interface Presenter {
+        fun register(view: View)
+        fun onViewReady()
         fun getLocationObservable(): Observable<Location>
-        fun getUserFriends(): Flowable<List<User>>
+        fun getUserFriends(): List<User>
+        fun getLastUserLocation(user: User): Location?
+        fun getUsersColors(): List<Pair<User, MarkerColors>>
+        fun getUserMarkerColor(user: User): MarkerColors
+        fun clear()
     }
 }

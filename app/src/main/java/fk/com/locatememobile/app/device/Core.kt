@@ -5,20 +5,18 @@ import android.util.Log
 import fk.com.locatememobile.app.data.Repository
 import fk.com.locatememobile.app.data.entities.Location
 import fk.com.locatememobile.app.data.entities.User
-import fk.com.locatememobile.app.data.entities.UserFriend
+import fk.com.locatememobile.app.data.rest.services.LocationDTO
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-/**
- * Created by korpa on 20.11.2017.
- */
 class Core : LocationSubscriptionStateListener, UserLocationUpdatesReceiver {
     val TAG = javaClass.simpleName
     var applicationContext: Context
     var repository: Repository
     var loggedInUser: User? = null
+    var deviceLocationSubscriber: DeviceLocationSubscriber? = null
 
     @Inject
     constructor(applicationContext: Context, repository: Repository) {
@@ -29,13 +27,21 @@ class Core : LocationSubscriptionStateListener, UserLocationUpdatesReceiver {
     fun isUserLoggedIn() = loggedInUser != null
 
     override fun onLocationServiceStarted() {
-        subscribeToLocationService(this)
+
     }
 
-    fun subscribeToLocationService(userLocationUpdatesReceiver: UserLocationUpdatesReceiver) {
+    fun subscribeToLocationService(userLocationUpdatesReceiver: UserLocationUpdatesReceiver): DeviceLocationSubscriber? {
         loggedInUser?.let {
-            DeviceLocationSubscriber(applicationContext, it, userLocationUpdatesReceiver).bindToLocationService()
+            return DeviceLocationSubscriber(applicationContext, it, userLocationUpdatesReceiver).bindToLocationService()
         }
+        return null
+    }
+
+    fun getFriendsLocationSubscription(): Observable<List<Location>> {
+        loggedInUser?.let {
+            return repository.getUserLocationsSubscription(it.id)
+        }
+        return Observable.error(Throwable("User not logged in"))
     }
 
     override fun onUserLocationUpdate(location: Location) {
@@ -50,13 +56,14 @@ class Core : LocationSubscriptionStateListener, UserLocationUpdatesReceiver {
                     { user: User ->
                         repository.deleteAllDataFromDb()
                         loggedInUser = user
+                        deviceLocationSubscriber?.userLocationUpdatesReceiver = null
+                            deviceLocationSubscriber = subscribeToLocationService(this)
                         Completable.fromCallable({
                             repository.roomDatabase.userDao().insert(user)
                         })
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe()
-                        completableEmitter.onComplete()
+                                .subscribe({ completableEmitter.onComplete() })
                     },
                     { error: Throwable ->
                         completableEmitter.onError(error)
@@ -70,7 +77,7 @@ class Core : LocationSubscriptionStateListener, UserLocationUpdatesReceiver {
         loggedInUser?.let {
             return repository.roomDatabase.userFriendsDao().getUserFriends(it.id)
         }
-        return Flowable.error({Throwable("User not logged in")})
+        return Flowable.error({ Throwable("User not logged in") })
     }
 
     fun getUsers(): Single<List<User>> {
@@ -80,12 +87,13 @@ class Core : LocationSubscriptionStateListener, UserLocationUpdatesReceiver {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             { userList: List<User> ->
+                                val userListWithoutLoggedUser = userList.toMutableList()
+                                userListWithoutLoggedUser.remove(loggedInUser)
                                 Observable.just(repository)
                                         .subscribeOn(Schedulers.io())
                                         .subscribe { repository ->
-                                            val i = 0
                                             repository.roomDatabase.userDao().insert(userList)
-                                            singleEmitter.onSuccess(userList)
+                                            singleEmitter.onSuccess(userListWithoutLoggedUser)
                                         }
                             },
                             { error: Throwable ->
@@ -106,7 +114,6 @@ class Core : LocationSubscriptionStateListener, UserLocationUpdatesReceiver {
                                 Observable.just(repository)
                                         .subscribeOn(Schedulers.io())
                                         .subscribe { repository ->
-                                            //                                            repository.roomDatabase.userFriendsDao().insertUserFriends(convertToUserFriendsRoomList(loggedInUser, userList))
                                             singleEmitter.onSuccess(userList)
                                         }
                             },
@@ -123,7 +130,7 @@ class Core : LocationSubscriptionStateListener, UserLocationUpdatesReceiver {
         loggedInUser?.let {
             return repository.serverRepository.userFriendsEndpoint.getUserFriends(it)
         }
-        return Single.create({ e: SingleEmitter<List<User>> -> e.onError(Throwable("User is not logged int")) })
+        return Single.create({ e: SingleEmitter<List<User>> -> e.onError(Throwable("User is not logged in")) })
     }
 
     fun postNewFriendsUserList(selectedUserFriends: List<User>?): Completable {
