@@ -4,5 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainFrame"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="fk.locateme.fk.com.locatememobile.app.ui.Activity" />
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/start_screen_progress_bar"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center_horizontal|center_vertical" />
+
+</FrameLayout>

@@ -17,6 +17,4 @@ class UserFriendsEndpoint(private val userFriendsService: UserFriendsService) {
     fun postUserFriends(user: User, userFriends: List<User>): Completable {
         return userFriendsService.postUserFriends(user.id, userFriends)
     }
-
-
 }

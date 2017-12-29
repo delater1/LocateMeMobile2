@@ -21,7 +21,7 @@ interface UserDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(user: List<User>)
 
-    @Query("SELECT * FROM Users WHERE firstName = :firstName AND lastName = :lastName")
+    @Query("SELECT * FROM Users WHERE instanceId = :instanceId AND device = :device")
     fun getUserByFirstNameAndLastName(firstName: String, lastName: String): List<User>
 
     @Query("DELETE FROM Users")

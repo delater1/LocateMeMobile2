@@ -57,7 +57,6 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
         getGoogleMap(m)
         setup()
         Log.d(TAG, repository.toString())
-        presenter.onViewReady()
     }
 
     private fun getGoogleMap(m: SupportMapFragment) {
@@ -65,9 +64,6 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
             map.clear()
             googleMap = map
             setMapProperties(googleMap)
-            presenter.getLocationObservable().subscribe({ l: Location ->
-                animateToUserPositionIfFirstLocation(l)
-            })
         })
     }
 
@@ -83,10 +79,6 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
         friend_list_recycler_view.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         userAdapter = UserAdapter(this)
         friend_list_recycler_view.adapter = userAdapter
-    }
-
-    override fun onUserFriendsListReceived(userFriendsRes: List<User>) {
-        userAdapter.setUsersWithColors(presenter.getUsersColors())
     }
 
     @SuppressLint("MissingPermission")
@@ -129,27 +121,14 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
         constraintSet.applyTo(main_map_fragment)
     }
 
-    override fun displayUpdatedUserLocations(userFriendsLocationMap: Map<User, Location>) {
-        userFriendsLocationMap.forEach { (user, location) ->
-            userMarkerMap[user]?.remove()
-            googleMap?.let {
-                userMarkerMap.put(user, it.addMarker(getMarkerOptions(location, user)))
-            }
-        }
-    }
-
     private fun getMarkerOptions(location: Location, user: User): MarkerOptions? {
         return MarkerOptions()
                 .position(LatLng(location.latitude, location.longitude))
-                .title(user.firstName + " " + user.lastName)
+                .title(user.instanceId + " " + user.device)
                 .icon(BitmapDescriptorFactory.defaultMarker(presenter.getUserMarkerColor(user).markerHue))
     }
 
     override fun onUserSelected(user: User) {
-        val location = presenter.getLastUserLocation(user)
-        location?.let {
-            googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(LatLng(it.latitude, it.longitude), 13f)))
-        }
     }
 
     override fun onStop() {

@@ -27,8 +27,8 @@ class UserAdapter : RecyclerView.Adapter<UserViewHolder> {
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        holder.userFirstName.text = userColorList[position].first.firstName
-        holder.userLastName.text = userColorList[position].first.lastName
+        holder.userFirstName.text = userColorList[position].first.instanceId
+        holder.userLastName.text = userColorList[position].first.device
         holder.userAvatar.setColorFilter(userColorList[position].second.color)
         holder.itemView.setOnClickListener({ userSelectedListener.onUserSelected(userColorList[position].first) })
     }

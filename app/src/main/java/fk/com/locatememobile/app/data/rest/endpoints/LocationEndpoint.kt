@@ -17,8 +17,8 @@ class LocationEndpoint(private val locationService: LocationService) {
 
     val TAG = this.javaClass.simpleName
 
-    fun getLocationDTOSubscrition(userId: Long): Observable<List<LocationDTO>> {
-        return Observable.interval(Constants.LOCATIONS_FROM_SERVER_INTERVAL, TimeUnit.SECONDS)
+    fun getLocationDTOSubscription(userId: Long, interval: Long): Observable<List<LocationDTO>> {
+        return Observable.interval(interval, TimeUnit.SECONDS)
                 .startWith(0)
                 .flatMap { locationService.getUserFriendsLastLocations(userId) }
                 .repeat()
@@ -26,7 +26,8 @@ class LocationEndpoint(private val locationService: LocationService) {
 
 
     fun postUserLocation(location: Location) {
-        locationService.addLocationForUser(location.userId, location).subscribeOn(Schedulers.newThread()).subscribe(object : CompletableObserver {
+        locationService.addLocationForUser(location.userId, location)
+                .subscribe(object : CompletableObserver {
             override fun onSubscribe(d: Disposable?) {
                 Log.d(TAG, "on subscribe")
             }
@@ -34,7 +35,6 @@ class LocationEndpoint(private val locationService: LocationService) {
             override fun onComplete() {
                 Log.d(TAG, "post user location complete")
             }
-
 
             override fun onError(e: Throwable) {
                 Log.e(TAG, "on Error: ${e.message}")

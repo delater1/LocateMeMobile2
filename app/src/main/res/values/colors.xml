@@ -4,15 +4,4 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="userCardViewBackground">#f5f5f5</color>
-    <color name="recyclerViewColor">#E0E0E0</color>
-    <color name="markerMagneta">#9f529e</color>
-    <color name="markerViolet">#b775f6</color>
-    <color name="markerGreen">#7df87a</color>
-    <color name="markerAzure">#75b6f5</color>
-    <color name="markerOrange">#f8b779</color>
-    <color name="markerRose">#f26faf</color>
-    <color name="markerRed">#f87d7e</color>
-    <color name="markerCyan">#726ff2</color>
-    <color name="markerBlue">#9f529e</color>
-    <color name="markerYellow">#f8f579</color>
 </resources>

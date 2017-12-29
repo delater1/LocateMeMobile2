@@ -32,8 +32,8 @@ class UserFriendsAdapter : ArrayAdapter<User> {
                 val lastNameTextView = it.findViewById<TextView>(R.id.user_friends_row_last_name)
                 val userFriendCheckBox = it.findViewById<CheckBox>(R.id.user_friends_row_is_user_friend_check_box)
 
-                firstNameTextView.text = userList[position].firstName
-                lastNameTextView.text = userList[position].lastName
+                firstNameTextView.text = userList[position].instanceId
+                lastNameTextView.text = userList[position].device
 
                 userFriendCheckBox.setOnClickListener(null)
                 userFriendCheckBox.isChecked = isUserInFriendList(userList[position])

@@ -25,7 +25,7 @@
             android:value="AIzaSyAYwelDkbp4oxliAUJSTT5MEm5_26d9EUg" />
 
         <activity
-            android:name="fk.com.locatememobile.app.ui.MainActivity"
+            android:name="fk.com.locatememobile.app.ui.Activity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,7 +35,7 @@
         </activity>
 
         <service
-            android:name="fk.com.locatememobile.app.device.LocationResultService"
+            android:name="fk.com.locatememobile.app.device.LocationService"
             android:label="My Service" >
         </service>
     </application>

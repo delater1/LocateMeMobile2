@@ -12,30 +12,53 @@ import io.reactivex.schedulers.Schedulers
 /**
  * Created by korpa on 06.11.2017.
  */
-class Repository(val serverRepository: ServerRepository, val roomDatabase: RoomDatabase) {
+class Repository(private val serverRepository: ServerRepository,
+                 private val roomDatabase: RoomDatabase) {
     val TAG = javaClass.simpleName
+
+
     fun postLocation(location: Location) {
-        serverRepository.locationEndpoint.postUserLocation(location)
         roomDatabase.locationDao().insert(location)
+        serverRepository.locationEndpoint.postUserLocation(location)
     }
 
-    fun createNewUser(firstName: String, lastName: String): Single<User> {
+    fun logInUser(firstName: String, lastName: String): Single<User> {
         return Single.create { e: SingleEmitter<User> ->
-            serverRepository.userEndpoint.createNewUser(User(-1, firstName, lastName)).subscribe(
-                    { user: User ->
-                        e.onSuccess(user)
+            serverRepository
+                    .userEndpoint
+                    .createNewUser(User(-1, firstName, lastName))
+                    .subscribe(
+                            { user: User ->
+                                roomDatabase.userDao().insert(user)
+                                e.onSuccess(user)
+                            },
+                            { error: Throwable ->
+                                Log.d(TAG, error.message)
+                                e.onError(error)
+                            }
+                    )
+        }
+    }
+
+    private fun loadUsersToDb(): Completable {
+        return Completable.create { e: CompletableEmitter ->
+            serverRepository.userEndpoint.getUsers().subscribe(
+                    { users: List<User> ->
+                        roomDatabase.userDao().insert(users)
+                        e.onComplete()
                     },
-                    { error: Throwable ->
-                        Log.d(TAG, error.message)
-                        e.onError(error)
-                    }
-            )
+                    { error: Throwable -> e.onError(error) })
+        }
+    }
+
+    private fun loadUserFriendsToDb(): Completable {
+        return Completable.create { e: CompletableEmitter ->
         }
     }
 
     fun getUserLocationsSubscription(userId: Long): Observable<List<Location>> {
         return Observable.create<List<Location>> { observableEmitter: ObservableEmitter<List<Location>> ->
-            serverRepository.locationEndpoint.getLocationDTOSubscrition(userId).subscribe(
+            serverRepository.locationEndpoint.getLocationDTOSubscription(userId).subscribe(
                     { res: List<LocationDTO> -> observableEmitter.onNext(convert(res)) },
                     { error: Throwable -> observableEmitter.onError(error) },
                     { observableEmitter.onComplete() }
@@ -44,25 +67,20 @@ class Repository(val serverRepository: ServerRepository, val roomDatabase: RoomD
     }
 
     fun convert(locationDTO: List<LocationDTO>): List<Location> {
-        return locationDTO.map { locationDTO -> Location(locationDTO.id, locationDTO.user.id, locationDTO.time, locationDTO.latitude, locationDTO.longitude) }
-    }
-
-    fun deleteAllDataFromDb() {
-        Completable.fromCallable {
-            roomDatabase.locationDao().deleteAllLocations()
-            roomDatabase.userFriendsDao().deleteAllUserFriends()
-            roomDatabase.userDao().deleteAllUsers()
+        return locationDTO.map { locationDTO ->
+            Location(locationDTO.id,
+                    locationDTO.user.id,
+                    locationDTO.time,
+                    locationDTO.latitude,
+                    locationDTO.longitude)
         }
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe()
     }
 
     fun addNewUserFriends(user: User, userFriends: List<User>): Completable {
         return serverRepository
                 .userFriendsEndpoint.postUserFriends(user, userFriends).doOnComplete({
             roomDatabase.userFriendsDao().insertUserFriends(convertToUserFriendsRoomList(user, userFriends))
-        }
-        )
+        })
     }
 
     private fun convertToUserFriendsRoomList(loggedInUser: User, userList: List<User>): List<UserFriend> {

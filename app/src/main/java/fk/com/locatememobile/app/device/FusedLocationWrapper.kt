@@ -13,6 +13,7 @@ import io.reactivex.ObservableOnSubscribe
  * Created by korpa on 29.10.2017.
  */
 class FusedLocationWrapper(applicationContext: Context, private var fused: FusedLocationProviderClient = FusedLocationProviderClient(applicationContext)) : ObservableOnSubscribe<LocationResult> {
+
     private val TAG = this::class.java.simpleName
     private lateinit var observableEmitter: ObservableEmitter<LocationResult>
     lateinit var locationCallback: LocationCallback
@@ -22,7 +23,7 @@ class FusedLocationWrapper(applicationContext: Context, private var fused: Fused
         this.observableEmitter = observableEmitter
         locationCallback = getLocationCallback(observableEmitter)
         try {
-            fused.requestLocationUpdates(getLocationRequest(), locationCallback, Looper.getMainLooper())
+            fused.requestLocationUpdates(getLocationRequest(), locationCallback, Looper.myLooper())
         } catch (e: SecurityException) {
             Log.e(ContentValues.TAG, "Security exception on location updates")
         }
@@ -30,8 +31,8 @@ class FusedLocationWrapper(applicationContext: Context, private var fused: Fused
 
     private fun getLocationRequest(): LocationRequest? {
         val locationRequest = LocationRequest.create()
-        locationRequest.interval = 10000
-        locationRequest.fastestInterval = 5000
+        locationRequest.interval = 60000
+        locationRequest.fastestInterval = 30000
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
         return locationRequest
     }

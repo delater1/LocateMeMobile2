@@ -7,6 +7,7 @@ import dagger.Provides
 import fk.com.locatememobile.app.data.Repository
 import fk.com.locatememobile.app.device.Core
 import fk.com.locatememobile.app.device.LocationSubscriptionStateListener
+import fk.com.locatememobile.app.device.SharedPreferencesRepository
 import fk.com.locatememobile.app.ui.*
 import javax.inject.Singleton
 
@@ -24,6 +25,12 @@ class AppModule(val application: Application) {
 
     @Provides
     @Singleton
+    fun provideSharedPreferencesRepository(applicationContext: Context): SharedPreferencesRepository {
+        return SharedPreferencesRepository(applicationContext)
+    }
+
+    @Provides
+    @Singleton
     fun provideCore(applicationContext: Context, repository: Repository): Core {
         return Core(applicationContext, repository)
     }
@@ -35,19 +42,7 @@ class AppModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun provideMapFragmentPresenter(applicationContext: Context, core: Core): MapFragmentContract.Presenter {
-        return MapFragmentPresenter(applicationContext, core)
-    }
-
-    @Provides
-    @Singleton
-    fun provideLoginFragmentPresenter(core: Core): LoginFragmentContract.Presenter {
-        return LoginFragmentPresenter(core)
-    }
-
-    @Provides
-    @Singleton
-    fun provideFriendsSelectionFragment(core: Core): FriendsSelectionContract.Presenter {
-        return FriendsSelectionPresenter(core)
+    fun provideMapFragmentPresenter(core: Core): MapFragmentContract.Presenter {
+        return MapFragmentPresenter(core)
     }
 }

@@ -10,4 +10,11 @@ import com.google.gson.annotations.SerializedName
  */
 @Entity(tableName = "Locations")
 @ForeignKey(entity = User::class, parentColumns = arrayOf("id"), childColumns = arrayOf("userId"))
-data class Location(@PrimaryKey(autoGenerate = true) var id: Long, @SerializedName("user_id") var userId: Long, var time: Long, var latitude: Double, var longitude: Double)
+data class Location(
+        @PrimaryKey(autoGenerate = true)
+        var id: Long,
+        @SerializedName("user_id")
+        var userId: Int,
+        var time: Long,
+        var latitude: Double,
+        var longitude: Double)
