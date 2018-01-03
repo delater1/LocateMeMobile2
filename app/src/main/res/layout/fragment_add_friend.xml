@@ -7,7 +7,7 @@
     tools:context="fk.com.locatememobile.app.ui.AddFriendFragment">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/add_friend_edit_texts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|center_vertical"
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Friends alias"
-            android:inputType="text"/>
+            android:inputType="text" />
     </LinearLayout>
 
     <ProgressBar
@@ -50,7 +50,7 @@
         app:layout_constraintBottom_toTopOf="@+id/add_friend_fragment_add_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/add_friend_edit_texts" />
 
     <Button
         android:id="@+id/add_friend_fragment_add_button"
@@ -78,7 +78,7 @@
         app:layout_constraintBottom_toTopOf="@+id/add_friend_fragment_add_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/add_friend_edit_texts" />
 
     <ImageView
         android:id="@+id/add_friend_close_button"
@@ -89,5 +89,33 @@
         android:src="@drawable/ic_close_black_48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/add_friend_error_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/add_friend_fragment_add_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_friend_edit_texts">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_cancel_red_48dp" />
+
+        <TextView
+            android:id="@+id/add_friend_error_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Error text"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

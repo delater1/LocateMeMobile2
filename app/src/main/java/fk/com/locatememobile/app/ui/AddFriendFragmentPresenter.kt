@@ -26,8 +26,7 @@ class AddFriendFragmentPresenter : AddFriendFragmentContract.Presenter {
                     .subscribe(
                             { view?.showSucces() },
                             { error: Throwable ->
-                                view?.showError("Couldnt add user friend")
-                                view?.showSucces()
+                                view?.showError("User with provided tag doesn't exists.")
                             })
             view?.showLoading()
         }

@@ -8,9 +8,10 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateInterpolator
 import android.widget.EditText
-import com.transitionseverywhere.*
+import com.transitionseverywhere.Slide
+import com.transitionseverywhere.TransitionManager
+import com.transitionseverywhere.TransitionSet
 import fk.com.locatememobile.app.App
 import fk.locateme.app.R
 import io.reactivex.Completable
@@ -39,6 +40,7 @@ class AddFriendFragment : Fragment(), AddFriendFragmentContract.View {
     }
 
     override fun showLoading() {
+        hideError()
         showProgressBar()
         disableViews()
     }
@@ -48,7 +50,23 @@ class AddFriendFragment : Fragment(), AddFriendFragmentContract.View {
     }
 
     override fun showError(message: String) {
+        add_friend_error_text.text = message
+        TransitionManager.beginDelayedTransition(add_friend_fragment_main_view,
+                TransitionSet()
+                        .addTransition(Slide(Gravity.RIGHT)
+                                .setInterpolator(FastOutLinearInInterpolator())
+                                .setDuration(500)))
+        showError()
+        hideProgressBar()
+        enableViews()
+    }
 
+    private fun showError() {
+        add_friend_error_view.visibility = View.VISIBLE
+    }
+
+    private fun hideError() {
+        add_friend_error_view.visibility = View.GONE
     }
 
     private fun disableViews() {
@@ -63,6 +81,18 @@ class AddFriendFragment : Fragment(), AddFriendFragmentContract.View {
         editText.isFocusableInTouchMode = false
     }
 
+    private fun enableViews() {
+        add_friend_fragment_add_button.isEnabled = true
+        enableEditText(add_friend_fragment_friend_tag_editText)
+        enableEditText(add_friend_fragment_friend_alias_editText)
+    }
+
+    private fun enableEditText(editText: EditText) {
+        editText.isEnabled = true
+        editText.isFocusable = true
+        editText.isFocusableInTouchMode = true
+    }
+
     override fun showSucces() {
         hideProgressBar()
         showSuccesIcon()
@@ -71,8 +101,10 @@ class AddFriendFragment : Fragment(), AddFriendFragmentContract.View {
     private fun showSuccesIcon() {
         TransitionManager.beginDelayedTransition(add_friend_fragment_main_view,
                 TransitionSet()
-                        .addTransition(Slide(Gravity.RIGHT).setInterpolator(FastOutLinearInInterpolator())
-                                .setDuration(1000)))
+                        .addTransition(Slide(Gravity.RIGHT)
+                                .setInterpolator(FastOutLinearInInterpolator())
+                                .setDuration(500)))
+        hideError()
         add_friend_succes_icon.visibility = View.VISIBLE
         waitAndPopFragment()
     }
