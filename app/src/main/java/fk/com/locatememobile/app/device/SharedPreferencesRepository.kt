@@ -10,8 +10,6 @@ import javax.inject.Inject
  * Created by FK on 28-Dec-17.
  */
 class SharedPreferencesRepository {
-
-
     @Inject
     constructor(applicationContext: Context) {
         this.applicationContext = applicationContext
@@ -26,7 +24,7 @@ class SharedPreferencesRepository {
 
     fun saveUserToken(token: String) {
         val sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(applicationContext).edit()
-        sharedPreferencesEditor.putString(USER_TOKEN_KEY, "")
+        sharedPreferencesEditor.putString(USER_TOKEN_KEY, token)
         sharedPreferencesEditor.apply()
     }
 

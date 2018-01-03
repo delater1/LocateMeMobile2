@@ -21,21 +21,20 @@ class UserAdapter : RecyclerView.Adapter<UserViewHolder> {
         this.userSelectedListener = userSelectedListener
     }
 
-    fun setUsersWithColors(usersWithColors: List<Pair<User,MarkerColors>>) {
+    fun setUsersWithColors(usersWithColors: List<Pair<User, MarkerColors>>) {
         userColorList = usersWithColors
         notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        holder.userFirstName.text = userColorList[position].first.instanceId
+        holder.userFirstName.text = userColorList[position].first.manufacturer
         holder.userLastName.text = userColorList[position].first.device
         holder.userAvatar.setColorFilter(userColorList[position].second.color)
         holder.itemView.setOnClickListener({ userSelectedListener.onUserSelected(userColorList[position].first) })
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        var userView = LayoutInflater.from(parent.context).inflate(R.layout.user_view, parent, false)
-        return UserViewHolder(userView)
+        return UserViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.user_view, parent, false))
     }
 
     override fun getItemCount() = userColorList.size

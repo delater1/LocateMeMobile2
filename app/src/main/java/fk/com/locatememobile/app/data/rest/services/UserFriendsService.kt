@@ -1,6 +1,8 @@
 package fk.com.locatememobile.app.data.rest.services
 
 import fk.com.locatememobile.app.data.entities.User
+import fk.com.locatememobile.app.data.entities.UserFriend
+import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
 import io.reactivex.Completable
 import io.reactivex.Single
 import retrofit2.http.Body
@@ -17,5 +19,5 @@ interface UserFriendsService {
     fun getUserFriends(@Path("userId") userId: Long): Single<List<User>>
 
     @POST("/user/{userId}/friends")
-    fun postUserFriends(@Path("userId") userId: Long, @Body userFriends: List<User>): Completable
+    fun postUserFriend(@Path("userId") userId: Long, @Body userFriendDTO: UserFriendDTO): Single<UserFriend>
 }

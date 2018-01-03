@@ -7,7 +7,6 @@ import javax.inject.Inject
  * Created by korpa on 06.11.2017.
  */
 class MapFragmentPresenter : MapFragmentContract.Presenter {
-
     val TAG = javaClass.simpleName
     val core: Core
     var view: MapFragmentContract.View? = null
@@ -19,5 +18,6 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
 
     override fun register(view: MapFragmentContract.View) {
         this.view = view
+        view.setToken(core.getUserToken())
     }
 }

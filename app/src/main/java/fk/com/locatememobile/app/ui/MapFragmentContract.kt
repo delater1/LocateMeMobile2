@@ -12,6 +12,7 @@ import io.reactivex.Observable
 
 interface MapFragmentContract {
     interface View {
+        fun setToken(token: String)
     }
 
     interface Presenter {

@@ -1,6 +1,8 @@
 package fk.com.locatememobile.app.data.rest.endpoints
 
 import fk.com.locatememobile.app.data.entities.User
+import fk.com.locatememobile.app.data.entities.UserFriend
+import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
 import fk.com.locatememobile.app.data.rest.services.UserFriendsService
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -14,7 +16,7 @@ class UserFriendsEndpoint(private val userFriendsService: UserFriendsService) {
         return userFriendsService.getUserFriends(user.id)
     }
 
-    fun postUserFriends(user: User, userFriends: List<User>): Completable {
-        return userFriendsService.postUserFriends(user.id, userFriends)
+    fun addUserFriend(user: User, userFriendDTO: UserFriendDTO): Single<UserFriend> {
+        return userFriendsService.postUserFriend(user.id, userFriendDTO)
     }
 }

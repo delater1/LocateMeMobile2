@@ -24,7 +24,7 @@
             android:layout_gravity="center"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:text="Imie"
+            android:text="Device"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -33,7 +33,7 @@
             android:layout_gravity="center"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:text="Nazwisko"
+            android:text="Manufactu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

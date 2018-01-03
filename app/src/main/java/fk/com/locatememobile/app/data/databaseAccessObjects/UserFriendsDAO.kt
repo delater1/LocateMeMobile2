@@ -18,7 +18,7 @@ interface UserFriendsDAO {
     fun getUserFriends(userId: Long): Flowable<List<User>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertUserFriends(userFriends: List<UserFriend>)
+    fun insertUserFriend(userFriend: UserFriend)
 
     @Query("DELETE FROM UserFriend")
     fun deleteAllUserFriends()

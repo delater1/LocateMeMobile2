@@ -5,20 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <fragment
-        android:id="@+id/map"
+        android:id="@+id/map_fragment_map"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <LinearLayout
-        android:id="@+id/button"
+        android:id="@+id/map_fragment_expand_button"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:background="#FFFFFF"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/main_map_fragment">
+        app:layout_constraintBottom_toTopOf="@id/map_fragment_bottom_drawer">
 
 
         <ImageView
@@ -29,17 +28,79 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/bottom_drawer"
+        android:id="@+id/map_fragment_bottom_drawer"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:background="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/button">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/map_fragment_map">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/friend_list_recycler_view"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+            android:layout_height="wrap_content">
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/map_fragment_no_friends_yet_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="No friends added yet."
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/map_fragment_friend_list_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/map_fragment_add_friend_button"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_margin="20dp"
+                app:cardBackgroundColor="@color/cardview_dark_background"
+                app:cardCornerRadius="16dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:src="@drawable/ic_add_white_24dp" />
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:text="Your token:"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/map_fragment_token_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ABC123"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

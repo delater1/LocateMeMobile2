@@ -1,24 +1,48 @@
 package fk.com.locatememobile.app.ui
 
+import android.util.Log
+import fk.com.locatememobile.app.device.Core
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+
 /**
  * Created by FK on 28-Dec-17.
  */
-class StartFragmentPresenter: StartFragmentContract.Presenter {
+class StartFragmentPresenter : StartFragmentContract.Presenter {
+    val TAG = javaClass.simpleName
+
+    constructor(core: Core) {
+        this.core = core
+    }
+
+    val core: Core
     var view: StartFragmentContract.View? = null
+
 
     override fun register(view: StartFragmentContract.View) {
         this.view = view
+        this.view?.checkPermissions()
     }
 
     override fun permissionNotGranted() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        view?.showError("Permission for location has not been granted.\n We cannot do anything :(")
     }
 
     override fun permissionGranted() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        core.startLocationService()
+        core.logIn()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSetupReady() },
+                        { error: Throwable ->
+                            view?.showError("Something went wrong during connecting to server")
+                            Log.e(TAG, error.message)
+                        }
+                )
     }
 
     override fun onSetupReady() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        view?.showMapFragment()
     }
 }

@@ -1,19 +1,16 @@
 package fk.com.locatememobile.app.ui
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import fk.com.locatememobile.app.App
-import fk.com.locatememobile.app.Constants.IntentExtrasKeys.LOCATION_UPDATE_INTERVAL
-import fk.com.locatememobile.app.device.LocationService
 import fk.locateme.app.R
+import kotlinx.android.synthetic.main.fragment_start.*
 import javax.inject.Inject
 
 /**
@@ -31,7 +28,7 @@ class StartFragment : Fragment(), StartFragmentContract.View {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_start, container)
+        return inflater.inflate(R.layout.fragment_start, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -40,12 +37,26 @@ class StartFragment : Fragment(), StartFragmentContract.View {
     }
 
     override fun showError(errorMessage: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        hideProgressBar()
+        showErrorText(errorMessage)
+    }
+
+    private fun showErrorText(errorMessage: String) {
+        start_fragment_error_description.text = errorMessage
+        start_fragment_error_description.setVisibility(View.VISIBLE)
+    }
+
+    private fun hideProgressBar() {
+        start_fragment_progress_bar.visibility = View.GONE
+    }
+
+    private fun showProgressBar() {
+        start_fragment_progress_bar.visibility = View.VISIBLE
     }
 
     override fun checkPermissions() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_REQUEST_FINE_LOCATION)
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_REQUEST_FINE_LOCATION)
         } else {
             presenter.permissionGranted()
         }
@@ -53,8 +64,16 @@ class StartFragment : Fragment(), StartFragmentContract.View {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == PERMISSIONS_REQUEST_FINE_LOCATION && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            presenter.permissionGranted()
         } else {
             presenter.permissionNotGranted()
         }
     }
+
+    override fun showMapFragment() {
+        val fragmentTransaction = activity.supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.mainFrame, MapFragment())
+        fragmentTransaction.commit()
+    }
+
 }

@@ -31,18 +31,25 @@ class AppModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun provideCore(applicationContext: Context, repository: Repository): Core {
-        return Core(applicationContext, repository)
-    }
-
-    @Provides
-    fun provideLocationSubscriptionStateListener(core: Core): LocationSubscriptionStateListener {
-        return core
+    fun provideCore(applicationContext: Context, repository: Repository, sharedPreferencesRepository: SharedPreferencesRepository): Core {
+        return Core(applicationContext, repository, sharedPreferencesRepository)
     }
 
     @Provides
     @Singleton
     fun provideMapFragmentPresenter(core: Core): MapFragmentContract.Presenter {
         return MapFragmentPresenter(core)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStartFragmentPresenter(core: Core): StartFragmentContract.Presenter {
+        return StartFragmentPresenter(core)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAddFriendPresenter(core: Core): AddFriendFragmentContract.Presenter {
+        return AddFriendFragmentPresenter(core)
     }
 }

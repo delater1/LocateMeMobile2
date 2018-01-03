@@ -33,7 +33,7 @@ dependencies {
 
     //dagger
     api 'com.google.dagger:dagger:2.12'
-    
+
     //Transitions evrywhere
     api "com.andkulikov:transitionseverywhere:1.7.7"
 

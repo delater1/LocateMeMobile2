@@ -17,4 +17,5 @@ interface AppComponent {
     fun inject(target: MapFragmentPresenter)
     fun inject(target: StartFragment)
     fun inject(target: SharedPreferencesRepository)
+    fun inject(target: AddFriendFragment)
 }

@@ -14,7 +14,8 @@ data class Location(
         @PrimaryKey(autoGenerate = true)
         var id: Long,
         @SerializedName("user_id")
-        var userId: Int,
+        var userId: Long,
         var time: Long,
         var latitude: Double,
-        var longitude: Double)
+        var longitude: Double,
+        var accuracy: Float)

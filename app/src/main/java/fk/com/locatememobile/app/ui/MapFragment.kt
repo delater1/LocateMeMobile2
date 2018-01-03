@@ -35,13 +35,12 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     @Inject
     lateinit var presenter: MapFragmentContract.Presenter
     lateinit var userAdapter: UserAdapter
-    private var isDrawerOpen: Boolean = false
     lateinit var userMarkerMap: HashMap<User, Marker>
+    private var isDrawerOpen: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity.application as App).appComponent.inject(this)
-        presenter.register(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -52,11 +51,12 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
 
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        val m = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        val m = childFragmentManager.findFragmentById(R.id.map_fragment_map) as SupportMapFragment
         userMarkerMap = hashMapOf()
         getGoogleMap(m)
         setup()
         Log.d(TAG, repository.toString())
+        presenter.register(this)
     }
 
     private fun getGoogleMap(m: SupportMapFragment) {
@@ -75,10 +75,18 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     }
 
     private fun setup() {
-        button.setOnClickListener { openCloseBottomDrawer() }
-        friend_list_recycler_view.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        map_fragment_expand_button.setOnClickListener { openCloseBottomDrawer() }
+        map_fragment_add_friend_button.setOnClickListener { openAddFriendFragment() }
+        map_fragment_friend_list_recycler_view.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         userAdapter = UserAdapter(this)
-        friend_list_recycler_view.adapter = userAdapter
+        map_fragment_friend_list_recycler_view.adapter = userAdapter
+    }
+
+    private fun openAddFriendFragment() {
+        val fragmentTransaction = activity.supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.mainFrame, AddFriendFragment())
+        fragmentTransaction.addToBackStack("MapFragment")
+        fragmentTransaction.commit()
     }
 
     @SuppressLint("MissingPermission")
@@ -102,10 +110,10 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     private fun showBottomDrawer() {
         val constraintSet = ConstraintSet()
         constraintSet.clone(main_map_fragment)
-        constraintSet.clear(R.id.button, ConstraintSet.BOTTOM)
-        constraintSet.clear(R.id.bottom_drawer, ConstraintSet.TOP)
-        constraintSet.connect(R.id.bottom_drawer, ConstraintSet.BOTTOM, R.id.main_map_fragment, ConstraintSet.BOTTOM)
-        constraintSet.connect(R.id.button, ConstraintSet.BOTTOM, R.id.bottom_drawer, ConstraintSet.TOP)
+        constraintSet.clear(R.id.map_fragment_expand_button, ConstraintSet.BOTTOM)
+        constraintSet.clear(R.id.map_fragment_bottom_drawer, ConstraintSet.TOP)
+        constraintSet.connect(R.id.map_fragment_bottom_drawer, ConstraintSet.BOTTOM, R.id.main_map_fragment, ConstraintSet.BOTTOM)
+        constraintSet.connect(R.id.map_fragment_expand_button, ConstraintSet.BOTTOM, R.id.map_fragment_bottom_drawer, ConstraintSet.TOP)
         TransitionManager.beginDelayedTransition(main_map_fragment, Fade(Fade.MODE_OUT))
         constraintSet.applyTo(main_map_fragment)
     }
@@ -113,10 +121,10 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     private fun hideBottomDrawer() {
         val constraintSet = ConstraintSet()
         constraintSet.clone(main_map_fragment)
-        constraintSet.clear(R.id.button, ConstraintSet.BOTTOM)
-        constraintSet.clear(R.id.bottom_drawer, ConstraintSet.BOTTOM)
-        constraintSet.connect(R.id.button, ConstraintSet.BOTTOM, R.id.main_map_fragment, ConstraintSet.BOTTOM)
-        constraintSet.connect(R.id.bottom_drawer, ConstraintSet.TOP, R.id.button, ConstraintSet.BOTTOM)
+        constraintSet.clear(R.id.map_fragment_expand_button, ConstraintSet.BOTTOM)
+        constraintSet.clear(R.id.map_fragment_bottom_drawer, ConstraintSet.BOTTOM)
+        constraintSet.connect(R.id.map_fragment_expand_button, ConstraintSet.BOTTOM, R.id.main_map_fragment, ConstraintSet.BOTTOM)
+        constraintSet.connect(R.id.map_fragment_bottom_drawer, ConstraintSet.TOP, R.id.map_fragment_expand_button, ConstraintSet.BOTTOM)
         TransitionManager.beginDelayedTransition(main_map_fragment, Slide(Gravity.BOTTOM))
         constraintSet.applyTo(main_map_fragment)
     }
@@ -124,8 +132,8 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     private fun getMarkerOptions(location: Location, user: User): MarkerOptions? {
         return MarkerOptions()
                 .position(LatLng(location.latitude, location.longitude))
-                .title(user.instanceId + " " + user.device)
-                .icon(BitmapDescriptorFactory.defaultMarker(presenter.getUserMarkerColor(user).markerHue))
+                .title(user.manufacturer + " " + user.device)
+//                .icon(BitmapDescriptorFactory.defaultMarker(presenter.getUserMarkerColor(user).markerHue))
     }
 
     override fun onUserSelected(user: User) {
@@ -137,4 +145,7 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
         userMarkerMap.clear()
     }
 
+    override fun setToken(token: String) {
+        map_fragment_token_text.text = token
+    }
 }

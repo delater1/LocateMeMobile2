@@ -11,9 +11,6 @@ import android.widget.TextView
 import fk.com.locatememobile.app.data.entities.User
 import fk.locateme.app.R
 
-/**
- * Created by korpa on 25.11.2017.
- */
 class UserFriendsAdapter : ArrayAdapter<User> {
     val userList: List<User>
     val mutableUserList: MutableList<User>
@@ -32,7 +29,7 @@ class UserFriendsAdapter : ArrayAdapter<User> {
                 val lastNameTextView = it.findViewById<TextView>(R.id.user_friends_row_last_name)
                 val userFriendCheckBox = it.findViewById<CheckBox>(R.id.user_friends_row_is_user_friend_check_box)
 
-                firstNameTextView.text = userList[position].instanceId
+                firstNameTextView.text = userList[position].manufacturer
                 lastNameTextView.text = userList[position].device
 
                 userFriendCheckBox.setOnClickListener(null)

@@ -2,9 +2,6 @@ package fk.com.locatememobile.app.ui
 
 import android.graphics.Color
 
-/**
- * Created by korpa on 03.12.2017.
- */
 enum class MarkerColors(val color: Int, val markerHue: Float) {
     HUE_MAGNETA(Color.parseColor("#9f529e"), 300F),
     HUE_VIOLET(Color.parseColor("#b775f6"), 270F),

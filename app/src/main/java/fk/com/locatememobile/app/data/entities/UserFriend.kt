@@ -11,7 +11,7 @@ import android.arch.persistence.room.PrimaryKey
         foreignKeys = arrayOf(
                 ForeignKey(entity = User::class, parentColumns = arrayOf("id"), childColumns = arrayOf("userId")),
                 ForeignKey(entity = User::class, parentColumns = arrayOf("id"), childColumns = arrayOf("userFriendId"))))
-class UserFriend(var userId: Int, var userFriendId: Int) {
+class UserFriend(var userId: Long, var userFriendId: Long) {
     @PrimaryKey(autoGenerate = true)
     var id: Long? = null
 }
