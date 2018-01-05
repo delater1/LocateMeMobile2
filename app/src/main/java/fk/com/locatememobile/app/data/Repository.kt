@@ -7,7 +7,7 @@ import fk.com.locatememobile.app.data.entities.UserFriend
 import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
 import fk.com.locatememobile.app.data.rest.services.LocationDTO
 import io.reactivex.*
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -42,11 +42,6 @@ class Repository(private val serverRepository: ServerRepository,
         }
     }
 
-    private fun loadUserFriendsToDb(): Completable {
-        return Completable.create { e: CompletableEmitter ->
-        }
-    }
-
     fun getUserLocationsSubscription(userId: Long, interval: Long): Observable<List<Location>> {
         return Observable.create<List<Location>> { observableEmitter: ObservableEmitter<List<Location>> ->
             serverRepository.locationEndpoint.getLocationDTOSubscription(userId, interval).subscribe(
@@ -68,12 +63,8 @@ class Repository(private val serverRepository: ServerRepository,
         }
     }
 
-    private fun convertToUserFriendsRoomList(loggedInUser: User, userList: List<User>): List<UserFriend> {
-        return userList.map { user -> UserFriend(loggedInUser.id, user.id) }
-    }
-
     fun addUserFriend(user: User, friendToken: String, friendAlias: String): Completable {
-        val userFriendDTO = UserFriendDTO(friendToken, friendAlias)
+        val userFriendDTO = UserFriendDTO(token = friendToken,alias =  friendAlias)
         return Completable.create { completableEmitter: CompletableEmitter ->
             postUserFriendToServerAndSaveItInLocalDb(user, userFriendDTO, completableEmitter)
         }
@@ -85,14 +76,14 @@ class Repository(private val serverRepository: ServerRepository,
                 .observeOn(Schedulers.io())
                 .subscribe(
                         { userFriend: UserFriend ->
-                            getUserFriendFromServerAndStoreIt(userFriend, completableEmitter)
+                            getUserFriendFromServerAndStoreIt(userFriendDTO.token, userFriend, completableEmitter)
                         },
                         { error: Throwable -> completableEmitter.onError(error) }
                 )
     }
 
-    private fun getUserFriendFromServerAndStoreIt(userFriend: UserFriend, completableEmitter: CompletableEmitter) {
-        serverRepository.userEndpoint.getUserById(userFriend.userFriendId)
+    private fun getUserFriendFromServerAndStoreIt(friendToken: String, userFriend: UserFriend, completableEmitter: CompletableEmitter) {
+        serverRepository.userEndpoint.getUserByToken(friendToken)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(
@@ -107,5 +98,9 @@ class Repository(private val serverRepository: ServerRepository,
 
     fun getLoggedInUser(token: String): User {
         return roomDatabase.userDao().getUserByToken(token)
+    }
+
+    fun getUserFriendsWithAliasesFromDb(userToken: String): Flowable<List<UserFriendDTO>> {
+        return roomDatabase.userFriendsDao().getUserFriendsDtosForToken(userToken)
     }
 }

@@ -23,7 +23,7 @@ class LocationService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         fusedLocationProvider = FusedLocationProviderClient(this)
-        val interval = intent?.getLongExtra(LOCATION_UPDATE_INTERVAL, 60000) ?: 60000
+        val interval = intent?.getLongExtra(LOCATION_UPDATE_INTERVAL, 60000) ?: 60000L
         locationCallback = createLocationCallback()
         try {
             fusedLocationProvider.requestLocationUpdates(getLocationRequest(interval), locationCallback, Looper.myLooper())

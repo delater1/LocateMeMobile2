@@ -15,8 +15,11 @@ interface UserService {
     @GET("/user/all")
     fun getUsers(): Single<List<User>>
 
-    @GET("/user/{id}")
-    fun getUserById(@Path("id") userId: Long): Single<User>
+    @GET("/user/token/{token}")
+    fun getUserByToken(@Path("token") userToken: String): Single<User>
+
+    @GET("/user/id/{id}")
+    fun getUserByToken(@Path("id") userId: Long): Single<User>
 
     @POST("/user")
     fun addUser(@Body user: User): Single<User>

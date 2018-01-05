@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.constraint.ConstraintSet
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -18,9 +17,9 @@ import com.transitionseverywhere.Fade
 import com.transitionseverywhere.Slide
 import com.transitionseverywhere.TransitionManager
 import fk.com.locatememobile.app.App
-import fk.com.locatememobile.app.data.Repository
 import fk.com.locatememobile.app.data.entities.Location
 import fk.com.locatememobile.app.data.entities.User
+import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
 import fk.locateme.app.R
 import kotlinx.android.synthetic.main.fragment_map.*
 import javax.inject.Inject
@@ -28,21 +27,18 @@ import javax.inject.Inject
 
 class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     val TAG = this::class.java.simpleName
+
     var googleMap: GoogleMap? = null
-    var isFirstZoom = true
-    @Inject
-    lateinit var repository: Repository
+
     @Inject
     lateinit var presenter: MapFragmentContract.Presenter
-    lateinit var userAdapter: UserAdapter
-    lateinit var userMarkerMap: HashMap<User, Marker>
-    private var isDrawerOpen: Boolean = false
 
+    lateinit var userAdapter: UserAdapter
+    private var isDrawerOpen: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity.application as App).appComponent.inject(this)
     }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         var view = inflater.inflate(R.layout.fragment_map, container, false)
@@ -52,10 +48,8 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         val m = childFragmentManager.findFragmentById(R.id.map_fragment_map) as SupportMapFragment
-        userMarkerMap = hashMapOf()
         getGoogleMap(m)
         setup()
-        Log.d(TAG, repository.toString())
         presenter.register(this)
     }
 
@@ -67,13 +61,6 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
         })
     }
 
-    private fun animateToUserPositionIfFirstLocation(l: Location) {
-        if (isFirstZoom) {
-            googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(LatLng(l.latitude, l.longitude), 13f)))
-            isFirstZoom = false
-        }
-    }
-
     private fun setup() {
         map_fragment_expand_button.setOnClickListener { openCloseBottomDrawer() }
         map_fragment_add_friend_button.setOnClickListener { openAddFriendFragment() }
@@ -82,11 +69,19 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
         map_fragment_friend_list_recycler_view.adapter = userAdapter
     }
 
+    override fun showUserFriends(userFriendMarkerColorPairs: List<Pair<UserFriendDTO, MarkerColors>>) {
+        userAdapter.setUsersWithColors(userFriendMarkerColorPairs)
+    }
+
     private fun openAddFriendFragment() {
         val fragmentTransaction = activity.supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.mainFrame, AddFriendFragment())
         fragmentTransaction.addToBackStack("MapFragment")
         fragmentTransaction.commit()
+    }
+
+    override fun zoomToUserLocation(location: Location) {
+        googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(LatLng(location.latitude, location.longitude), 13f)))
     }
 
     @SuppressLint("MissingPermission")
@@ -136,13 +131,14 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
 //                .icon(BitmapDescriptorFactory.defaultMarker(presenter.getUserMarkerColor(user).markerHue))
     }
 
-    override fun onUserSelected(user: User) {
+
+    override fun onUserSelected(user: UserFriendDTO) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onStop() {
         super.onStop()
         googleMap?.clear()
-        userMarkerMap.clear()
     }
 
     override fun setToken(token: String) {

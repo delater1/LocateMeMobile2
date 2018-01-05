@@ -7,21 +7,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import fk.com.locatememobile.app.data.entities.User
+import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
 import fk.locateme.app.R
 
-/**
- * Created by korpa on 20.11.2017.
- */
 class UserAdapter : RecyclerView.Adapter<UserViewHolder> {
     val userSelectedListener: UserSelectedListener
-    var userColorList: List<Pair<User, MarkerColors>>
+    var userColorList: List<Pair<UserFriendDTO, MarkerColors>>
 
     constructor(userSelectedListener: UserSelectedListener) : super() {
         userColorList = listOf()
         this.userSelectedListener = userSelectedListener
     }
 
-    fun setUsersWithColors(usersWithColors: List<Pair<User, MarkerColors>>) {
+    fun setUsersWithColors(usersWithColors: List<Pair<UserFriendDTO, MarkerColors>>) {
         userColorList = usersWithColors
         notifyDataSetChanged()
     }

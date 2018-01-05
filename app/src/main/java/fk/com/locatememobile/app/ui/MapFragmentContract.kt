@@ -1,9 +1,7 @@
 package fk.com.locatememobile.app.ui
 
 import fk.com.locatememobile.app.data.entities.Location
-import fk.com.locatememobile.app.data.entities.User
-import io.reactivex.Flowable
-import io.reactivex.Observable
+import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
 
 
 /**
@@ -13,6 +11,8 @@ import io.reactivex.Observable
 interface MapFragmentContract {
     interface View {
         fun setToken(token: String)
+        fun zoomToUserLocation(location: Location)
+        fun showUserFriends(userFriendsAndAliases: List<Pair<UserFriendDTO, MarkerColors>>)
     }
 
     interface Presenter {
