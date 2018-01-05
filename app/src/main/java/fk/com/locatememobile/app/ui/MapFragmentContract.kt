@@ -17,5 +17,6 @@ interface MapFragmentContract {
 
     interface Presenter {
         fun register(view: View)
+        fun viewResumed()
     }
 }

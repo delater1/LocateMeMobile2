@@ -9,15 +9,13 @@ import io.reactivex.schedulers.Schedulers
  * Created by FK on 28-Dec-17.
  */
 class StartFragmentPresenter : StartFragmentContract.Presenter {
-    val TAG = javaClass.simpleName
-
     constructor(core: Core) {
         this.core = core
     }
 
+    val TAG = javaClass.simpleName
     val core: Core
     var view: StartFragmentContract.View? = null
-
 
     override fun register(view: StartFragmentContract.View) {
         this.view = view

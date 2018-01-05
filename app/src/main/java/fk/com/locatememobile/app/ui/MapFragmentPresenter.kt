@@ -12,18 +12,18 @@ import javax.inject.Inject
  * Created by korpa on 06.11.2017.
  */
 class MapFragmentPresenter : MapFragmentContract.Presenter {
-    val TAG = javaClass.simpleName
-    val core: Core
-    var view: MapFragmentContract.View? = null
-    var friendColorPairs: List<Pair<UserFriendDTO, MarkerColors>>
-    var isFirstLocationUpdate = true
-
     @Inject
     constructor(core: Core) {
         this.core = core
         friendColorPairs = listOf()
     }
 
+    val TAG = javaClass.simpleName
+
+    val core: Core
+    var view: MapFragmentContract.View? = null
+    var friendColorPairs: List<Pair<UserFriendDTO, MarkerColors>>
+    var isFirstLocationUpdate = true
     override fun register(view: MapFragmentContract.View) {
         this.view = view
         view.setToken(core.getUserToken())
@@ -31,8 +31,12 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
         subscribeToLocationUpdates()
     }
 
+    override fun viewResumed() {
+        refreshUserFriends()
+    }
+
     private fun subscribeToLocationUpdates() {
-        core.getLocationObservable()
+        core.getLocationPublishSubject()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -41,6 +45,10 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
                         },
                         { error: Throwable -> Log.e(TAG, error.message) }
                 )
+    }
+
+    private fun refreshUserFriends() {
+        getUserFriendsDtos()
     }
 
 

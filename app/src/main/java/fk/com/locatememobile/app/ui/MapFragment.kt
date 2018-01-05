@@ -27,21 +27,20 @@ import javax.inject.Inject
 
 class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     val TAG = this::class.java.simpleName
-
     var googleMap: GoogleMap? = null
-
     @Inject
     lateinit var presenter: MapFragmentContract.Presenter
-
     lateinit var userAdapter: UserAdapter
     private var isDrawerOpen: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity.application as App).appComponent.inject(this)
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.fragment_map, container, false)
+        val view = inflater.inflate(R.layout.fragment_map, container, false)
         return view
     }
 
@@ -61,6 +60,11 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        presenter.viewResumed()
+    }
+
     private fun setup() {
         map_fragment_expand_button.setOnClickListener { openCloseBottomDrawer() }
         map_fragment_add_friend_button.setOnClickListener { openAddFriendFragment() }
@@ -70,7 +74,30 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     }
 
     override fun showUserFriends(userFriendMarkerColorPairs: List<Pair<UserFriendDTO, MarkerColors>>) {
-        userAdapter.setUsersWithColors(userFriendMarkerColorPairs)
+        if (!userFriendMarkerColorPairs.isEmpty()) {
+            userAdapter.setUsersWithColors(userFriendMarkerColorPairs)
+            hideNoFriendsPlaceholder()
+            showFriendsRecyclerView()
+        } else {
+            hideFriendsRecyclerView()
+            showNoFriendsPlaceholder()
+        }
+    }
+
+    private fun hideNoFriendsPlaceholder() {
+        map_fragment_no_friends_yet_text.visibility = View.GONE
+    }
+
+    private fun showNoFriendsPlaceholder() {
+        map_fragment_no_friends_yet_text.visibility = View.VISIBLE
+    }
+
+    private fun showFriendsRecyclerView() {
+        map_fragment_friend_list_recycler_view.visibility = View.VISIBLE
+    }
+
+    private fun hideFriendsRecyclerView() {
+        map_fragment_friend_list_recycler_view.visibility = View.GONE
     }
 
     private fun openAddFriendFragment() {

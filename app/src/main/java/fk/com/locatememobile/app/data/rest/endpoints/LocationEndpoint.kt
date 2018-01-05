@@ -28,17 +28,17 @@ class LocationEndpoint(private val locationService: LocationService) {
     fun postUserLocation(location: Location) {
         locationService.addLocationForUser(location.userId, location)
                 .subscribe(object : CompletableObserver {
-            override fun onSubscribe(d: Disposable?) {
-                Log.d(TAG, "on subscribe")
-            }
+                    override fun onSubscribe(d: Disposable?) {
+                        Log.d(TAG, "on subscribe")
+                    }
 
-            override fun onComplete() {
-                Log.d(TAG, "post user location complete")
-            }
+                    override fun onComplete() {
+                        Log.d(TAG, "post user location complete")
+                    }
 
-            override fun onError(e: Throwable) {
-                Log.e(TAG, "on Error: ${e.message}")
-            }
-        })
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "on Error: ${e.message}")
+                    }
+                })
     }
 }

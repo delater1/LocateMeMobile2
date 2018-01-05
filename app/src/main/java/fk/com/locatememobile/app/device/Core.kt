@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
+import android.util.Log
 import fk.com.locatememobile.app.Constants
 import fk.com.locatememobile.app.data.Repository
 import fk.com.locatememobile.app.data.entities.Location
@@ -11,6 +12,7 @@ import fk.com.locatememobile.app.data.entities.User
 import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
 import io.reactivex.*
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
 class Core {
@@ -40,8 +42,8 @@ class Core {
                 IntentFilter(Constants.IntentExtrasKeys.LOCATION_ACTION_KEY))
     }
 
-    fun getLocationObservable(): Observable<Location> {
-        return locationBroadcastReceiver.observable
+    fun getLocationPublishSubject(): PublishSubject<Location> {
+        return locationBroadcastReceiver.publishSubject
     }
 
     fun getLocationServiceIntent(): Intent {
@@ -58,7 +60,23 @@ class Core {
                 loggedInUser = repository.getLoggedInUser(getUserToken())
                 e.onComplete()
             }
+            startSendingLocationUpdates()
         }
+    }
+
+    private fun startSendingLocationUpdates() {
+        locationBroadcastReceiver.publishSubject
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(
+                        { location: Location -> repository.postLocation(appendUserData(location)) },
+                        { error: Throwable -> Log.e(TAG, error.message) }
+                )
+    }
+
+    private fun appendUserData(location: Location): Location {
+        location.userId = repository.getLoggedInUser(getUserToken()).id
+        return location
     }
 
     private fun createNewUser(e: CompletableEmitter) {

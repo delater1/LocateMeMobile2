@@ -11,6 +11,7 @@ import fk.com.locatememobile.app.Constants.IntentExtrasKeys.LATIDUTE_KEY
 import fk.com.locatememobile.app.Constants.IntentExtrasKeys.LOCATION_ACTION_KEY
 import fk.com.locatememobile.app.Constants.IntentExtrasKeys.LOCATION_UPDATE_INTERVAL
 import fk.com.locatememobile.app.Constants.IntentExtrasKeys.LONGITUDE_KEY
+import fk.com.locatememobile.app.Constants.IntentExtrasKeys.TIME_KEY
 
 /**
  * Created by korpa on 22.10.2017.
@@ -23,7 +24,7 @@ class LocationService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         fusedLocationProvider = FusedLocationProviderClient(this)
-        val interval = intent?.getLongExtra(LOCATION_UPDATE_INTERVAL, 60000) ?: 60000L
+        val interval = intent?.getLongExtra(LOCATION_UPDATE_INTERVAL, 60000L) ?: 60000L
         locationCallback = createLocationCallback()
         try {
             fusedLocationProvider.requestLocationUpdates(getLocationRequest(interval), locationCallback, Looper.myLooper())
@@ -33,11 +34,12 @@ class LocationService : Service() {
         return Service.START_STICKY
     }
 
-    private fun getLocationRequest(interval: Long): LocationRequest? {
+    private fun getLocationRequest(interval: Long): LocationRequest {
         val locationRequest = LocationRequest.create()
         locationRequest.interval = interval
         locationRequest.fastestInterval = interval / 2
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+        locationRequest.smallestDisplacement = 0F
         return locationRequest
     }
 
@@ -47,6 +49,7 @@ class LocationService : Service() {
                 Log.d(TAG, "recieved location update: ${locationResult.lastLocation.latitude}, ${locationResult.lastLocation.longitude}")
                 val broadcastIntent = Intent()
                 broadcastIntent.action = LOCATION_ACTION_KEY
+                broadcastIntent.putExtra(TIME_KEY, locationResult.lastLocation.time)
                 broadcastIntent.putExtra(LATIDUTE_KEY, locationResult.lastLocation.latitude)
                 broadcastIntent.putExtra(LONGITUDE_KEY, locationResult.lastLocation.longitude)
                 broadcastIntent.putExtra(ACCURACY, locationResult.lastLocation.accuracy)
@@ -61,6 +64,6 @@ class LocationService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        fusedLocationProvider.removeLocationUpdates(createLocationCallback())
+        fusedLocationProvider.removeLocationUpdates(locationCallback)
     }
 }

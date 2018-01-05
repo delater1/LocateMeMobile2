@@ -17,5 +17,6 @@ object Constants {
         val ACCURACY = "accuracy"
         val LOCATION_ACTION_KEY = "fk.com.location"
         val LOCATION_UPDATE_INTERVAL = "location_update_interval"
+        val TIME_KEY = "time"
     }
 }
