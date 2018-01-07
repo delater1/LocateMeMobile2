@@ -26,16 +26,17 @@ import javax.inject.Inject
 
 
 class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
-    val TAG = this::class.java.simpleName
-
-    var googleMap: GoogleMap? = null
-
+    private val TAG = this::class.java.simpleName
     @Inject
     lateinit var presenter: MapFragmentContract.Presenter
-    lateinit var userAdapter: UserAdapter
+    private lateinit var userMarkerMap: MutableMap<UserFriendDTO, Marker>
+    private lateinit var userAdapter: UserAdapter
+    private var googleMap: GoogleMap? = null
     private var isDrawerOpen: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userMarkerMap = mutableMapOf()
         (activity.application as App).appComponent.inject(this)
     }
 
@@ -110,8 +111,10 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
         val lastLocation = it.findLast { it != null }
         lastLocation?.let {
             val userMarkerPair = userMarkerPairs.find { it.first.userFriendId == lastLocation.userId }
-            if (userMarkerPair != null)
-                googleMap?.addMarker(getMarkerOptions(lastLocation, userMarkerPair.first, userMarkerPair.second))
+            if (userMarkerPair != null) {
+                val marker = googleMap?.addMarker(getMarkerOptions(lastLocation, userMarkerPair.first, userMarkerPair.second))
+                addNewMarkerToMapAndRemoveOld(userMarkerPair.first, marker)
+            }
         }
     }
 
@@ -216,7 +219,7 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
         map_fragment_friends_view.visibility = View.VISIBLE
     }
 
-    private fun getMarkerOptions(location: Location, user: UserFriendDTO, markerColors: MarkerColors): MarkerOptions? {
+    private fun getMarkerOptions(location: Location, user: UserFriendDTO, markerColors: MarkerColors): MarkerOptions {
         return MarkerOptions()
                 .position(LatLng(location.latitude, location.longitude))
                 .title(user.manufacturer + " " + user.device)
@@ -238,9 +241,23 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     }
 
     override fun displaySelectedUserFriendLocation(selectedUserFriend: UserFriendDTO, location: Location?, markerColors: MarkerColors) {
-        if (location != null){
-            googleMap?.addMarker(getMarkerOptions(location, selectedUserFriend, markerColors))
+        if (location != null) {
+            addMarkerAndZoomToUserLocation(selectedUserFriend, location, markerColors)
+        }
+    }
+
+    private fun addMarkerAndZoomToUserLocation(userFriend: UserFriendDTO, location: Location, markerColors: MarkerColors) {
+        googleMap?.let {
+            val marker = it.addMarker(getMarkerOptions(location, userFriend, markerColors))
+            addNewMarkerToMapAndRemoveOld(userFriend, marker)
             zoomToUserLocation(location)
+        }
+    }
+
+    private fun addNewMarkerToMapAndRemoveOld(userFriend: UserFriendDTO, marker: Marker?) {
+        if (marker != null) {
+            userMarkerMap[userFriend]?.remove()
+            userMarkerMap[userFriend] = marker
         }
     }
 }

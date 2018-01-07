@@ -13,21 +13,20 @@ import javax.inject.Inject
  * Created by korpa on 06.11.2017.
  */
 class MapFragmentPresenter : MapFragmentContract.Presenter {
+    private val TAG = javaClass.simpleName
+    private val core: Core
+    private var view: MapFragmentContract.View? = null
+    private var friendColorPairs: List<Pair<UserFriendDTO, MarkerColors>>
+    private var userFriendsLocationsInBuckets: Array<List<Location?>>
+    private var isFirstLocationUpdate = true
+    private var selectedUserFriend: UserFriendDTO? = null
+
     @Inject
     constructor(core: Core) {
         this.core = core
         friendColorPairs = listOf()
         userFriendsLocationsInBuckets = arrayOf()
     }
-
-    val TAG = javaClass.simpleName
-
-    val core: Core
-    var view: MapFragmentContract.View? = null
-    var friendColorPairs: List<Pair<UserFriendDTO, MarkerColors>>
-    var userFriendsLocationsInBuckets: Array<List<Location?>>
-    var isFirstLocationUpdate = true
-    var selectedUserFriend: UserFriendDTO? = null
     override fun register(view: MapFragmentContract.View) {
         this.view = view
         view.setToken(core.getUserToken())
@@ -127,7 +126,7 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
         selectedUserFriend?.let {
             val locations = getUserLocations(it)
             if (locations != null) {
-                val size = locations.filterNotNull().size
+                val size = locations.filterNotNull().size - 1
                 val choosenIndex = getSelectedIndex(size, progress)
                 Log.d(TAG, "Seek bar result is $choosenIndex of $size, progress: $progress")
                 view?.displaySelectedUserFriendLocation(it, locations.filterNotNull()[choosenIndex], friendColorPairs.find { x -> it == x.first }!!.second)
