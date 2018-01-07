@@ -79,7 +79,6 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
                 )
     }
 
-
     private fun refreshUserFriends() {
         getUserFriendsDtos()
     }
@@ -142,3 +141,4 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
         return userFriendsLocationsInBuckets.find { it.find { it?.userId == userFriend.userFriendId } != null }
     }
 }
+

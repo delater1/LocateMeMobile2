@@ -5,11 +5,12 @@ import android.os.Bundle
 import android.support.constraint.ConstraintSet
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.AttributeSet
+import android.util.Xml
+import android.view.*
+import android.view.animation.AnimationUtils
 import android.widget.SeekBar
+import android.widget.TextView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -22,6 +23,9 @@ import fk.com.locatememobile.app.data.entities.Location
 import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
 import fk.locateme.app.R
 import kotlinx.android.synthetic.main.fragment_map.*
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.inject.Inject
 
 
@@ -73,6 +77,22 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
         userAdapter = UserAdapter(this)
         map_fragment_friend_list_recycler_view.adapter = userAdapter
         setSeekBarChangeListener()
+        setUpTextSwitcher()
+    }
+
+    private fun setUpTextSwitcher() {
+        map_fragment_current_location_time_text_switcher.setFactory({
+            TextView(ContextThemeWrapper(context, R.style.textSwitcherTextStyle), null, 0)
+        })
+        val inAnim = AnimationUtils.loadAnimation(activity,
+                android.R.anim.fade_in)
+        val outAnim = AnimationUtils.loadAnimation(activity,
+                android.R.anim.fade_out)
+
+        inAnim.duration = 200
+        outAnim.duration = 200
+        map_fragment_current_location_time_text_switcher.inAnimation = inAnim
+        map_fragment_current_location_time_text_switcher.outAnimation = outAnim
     }
 
     private fun setClickListeners() {
@@ -203,6 +223,7 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
 
     private fun showSeekBarView() {
         map_fragment_seek_time_view.visibility = View.VISIBLE
+        map_fragment_seek_time_bar.progress = 100
     }
 
 
@@ -243,7 +264,13 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     override fun displaySelectedUserFriendLocation(selectedUserFriend: UserFriendDTO, location: Location?, markerColors: MarkerColors) {
         if (location != null) {
             addMarkerAndZoomToUserLocation(selectedUserFriend, location, markerColors)
+            map_fragment_current_location_time_text_switcher.setText(formatDate(location.time))
         }
+    }
+
+    private fun formatDate(time: Long): String {
+        val dateFormatter = SimpleDateFormat("HH:mm")
+        return dateFormatter.format(Date(time))
     }
 
     private fun addMarkerAndZoomToUserLocation(userFriend: UserFriendDTO, location: Location, markerColors: MarkerColors) {

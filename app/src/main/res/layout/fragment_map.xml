@@ -39,7 +39,8 @@
             android:id="@+id/map_fragment_seek_time_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/map_fragment_seek_time_view_close"
@@ -47,30 +48,29 @@
                 android:layout_height="30dp"
                 android:layout_gravity="right"
                 android:layout_marginEnd="20dp"
-                android:src="@drawable/ic_close_black_48dp"/>
+                android:src="@drawable/ic_close_black_48dp" />
 
             <SeekBar
                 android:id="@+id/map_fragment_seek_time_bar"
                 android:layout_width="match_parent"
-                android:layout_marginStart="30dp"
+                android:layout_height="30dp"
                 android:layout_marginEnd="30dp"
-                android:layout_height="30dp" />
+                android:layout_marginStart="30dp" />
 
-            <TextView
-                android:id="@+id/map_fragment_current_location_time"
+            <TextSwitcher
+                android:id="@+id/map_fragment_current_location_time_text_switcher"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_gravity="center_horizontal"
                 android:text="00:00"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="25dp" />
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/map_fragment_friends_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="0dp"

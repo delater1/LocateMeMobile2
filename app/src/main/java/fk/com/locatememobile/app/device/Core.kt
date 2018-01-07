@@ -80,7 +80,7 @@ class Core {
     }
 
     private fun createNewUser(e: CompletableEmitter) {
-        repository.logInUser(Build.MODEL, Build.MANUFACTURER)
+        repository.logInUser(getModel(Build.MODEL, Build.MANUFACTURER), Build.MANUFACTURER)
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(
                         { user: User ->
@@ -91,6 +91,10 @@ class Core {
                         { error: Throwable -> e.onError(error) }
 
                 )
+    }
+
+    private fun getModel(model: String, manufacturer: String): String {
+        return model.replace(manufacturer, "", true)
     }
 
     fun addUserFriend(tag: String, alias: String): Completable {
