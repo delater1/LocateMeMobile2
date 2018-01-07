@@ -7,6 +7,7 @@ import fk.com.locatememobile.app.data.rest.services.LocationDTO
 import fk.com.locatememobile.app.data.rest.services.LocationService
 import io.reactivex.CompletableObserver
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -24,12 +25,16 @@ class LocationEndpoint(private val locationService: LocationService) {
                 .repeat()
     }
 
+    fun getBucketedUserLocationsInLast24H(userId: Long): Single<List<Location>> {
+       return locationService.getUsersLastLocationsWithinLast24HBucketed(userId)
+    }
+
 
     fun postUserLocation(location: Location) {
         locationService.addLocationForUser(location.userId, location)
                 .subscribe(object : CompletableObserver {
-                    override fun onSubscribe(d: Disposable?) {
-                        Log.d(TAG, "on subscribe")
+                    override fun onSubscribe(d: Disposable) {
+
                     }
 
                     override fun onComplete() {

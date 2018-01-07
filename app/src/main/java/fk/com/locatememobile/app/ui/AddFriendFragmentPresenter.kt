@@ -1,6 +1,7 @@
 package fk.com.locatememobile.app.ui
 
 import android.util.Log
+import fk.com.locatememobile.app.data.entities.Location
 import fk.com.locatememobile.app.device.Core
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -8,6 +9,7 @@ import javax.inject.Inject
 
 class AddFriendFragmentPresenter : AddFriendFragmentContract.Presenter {
     val TAG = javaClass.simpleName
+
     @Inject
     constructor(core: Core) {
         this.core = core
@@ -19,6 +21,7 @@ class AddFriendFragmentPresenter : AddFriendFragmentContract.Presenter {
     override fun register(view: AddFriendFragmentContract.View) {
         this.view = view
     }
+
 
     override fun addButtonClicked() {
         view?.let {

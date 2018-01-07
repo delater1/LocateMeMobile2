@@ -21,7 +21,7 @@ interface UserFriendsDAO {
             " u.manufacturer AS manufacturer," +
             " u.token AS token," +
             " uf.alias AS alias" +
-            " FROM Users u JOIN UserFriends uf ON u.id = uf.userFriendId" +
+            " FROM Users u JOIN UserFriends uf ON u.id = uf.userId" +
             " WHERE uf.userId = (SELECT id FROM Users WHERE token = :token)")
     fun getUserFriendsDtosForToken(token: String): Flowable<List<UserFriendDTO>>
 

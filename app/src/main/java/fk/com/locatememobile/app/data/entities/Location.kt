@@ -13,7 +13,6 @@ import com.google.gson.annotations.SerializedName
 data class Location(
         @PrimaryKey(autoGenerate = true)
         var id: Long,
-        @SerializedName("user_id")
         var userId: Long,
         var time: Long,
         var latitude: Double,

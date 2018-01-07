@@ -4,6 +4,7 @@ import android.util.Log
 import fk.com.locatememobile.app.data.entities.Location
 import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
 import fk.com.locatememobile.app.device.Core
+import fk.com.locatememobile.app.device.LocationService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -16,6 +17,7 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
     constructor(core: Core) {
         this.core = core
         friendColorPairs = listOf()
+        userFriendsLocationsInBuckets = arrayOf()
     }
 
     val TAG = javaClass.simpleName
@@ -23,7 +25,9 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
     val core: Core
     var view: MapFragmentContract.View? = null
     var friendColorPairs: List<Pair<UserFriendDTO, MarkerColors>>
+    var userFriendsLocationsInBuckets: Array<List<Location?>>
     var isFirstLocationUpdate = true
+    var selectedUserFriend: UserFriendDTO? = null
     override fun register(view: MapFragmentContract.View) {
         this.view = view
         view.setToken(core.getUserToken())
@@ -31,8 +35,37 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
         subscribeToLocationUpdates()
     }
 
+    private fun getUserFriendsLocationsInBuckets() {
+        core.getUserFriendsLocationBuckets()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { result: Array<List<Location?>> ->
+                            userFriendsLocationsInBuckets = result
+                            view?.showUserFriendsLocations(userFriendsLocationsInBuckets, friendColorPairs)
+                        },
+                        { error: Throwable ->
+                            Log.e(TAG, error.message)
+                        }
+                )
+    }
+
     override fun viewResumed() {
         refreshUserFriends()
+        getUserFriendsLocationsInBuckets()
+    }
+
+    override fun userSelected(user: UserFriendDTO) {
+        val lastUserLocation = getLastLocationForUser(user)
+        if (lastUserLocation != null) {
+            selectedUserFriend = user
+            view?.zoomToUserLocation(lastUserLocation)
+            view?.showTimeSeekBarView()
+        }
+    }
+
+    private fun getLastLocationForUser(user: UserFriendDTO): Location? {
+        return userFriendsLocationsInBuckets.find { it.find { it?.userId == user.userFriendId } != null }?.findLast { it != null }
     }
 
     private fun subscribeToLocationUpdates() {
@@ -47,10 +80,10 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
                 )
     }
 
+
     private fun refreshUserFriends() {
         getUserFriendsDtos()
     }
-
 
     private fun getUserFriendsDtos() {
         core.getUserFriendsAsDtos()
@@ -66,6 +99,7 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
                         }
                 )
     }
+
 
     private fun mapMarkerColorsToUserFriendDtos(userFriendDtoList: List<UserFriendDTO>): List<Pair<UserFriendDTO, MarkerColors>> {
         var index = 0
@@ -83,5 +117,29 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
                 isFirstLocationUpdate = false
             }
         }
+    }
+
+    override fun userSelectionCancelled() {
+        selectedUserFriend = null
+    }
+
+    override fun onSeekBarValueChanged(progress: Int) {
+        selectedUserFriend?.let {
+            val locations = getUserLocations(it)
+            if (locations != null) {
+                val size = locations.filterNotNull().size
+                val choosenIndex = getSelectedIndex(size, progress)
+                Log.d(TAG, "Seek bar result is $choosenIndex of $size, progress: $progress")
+                view?.displaySelectedUserFriendLocation(it, locations.filterNotNull()[choosenIndex], friendColorPairs.find { x -> it == x.first }!!.second)
+            }
+        }
+    }
+
+    private fun getSelectedIndex(size: Int, progress: Int): Int {
+        return (size * progress) / 100
+    }
+
+    private fun getUserLocations(userFriend: UserFriendDTO): List<Location?>? {
+        return userFriendsLocationsInBuckets.find { it.find { it?.userId == userFriend.userFriendId } != null }
     }
 }

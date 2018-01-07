@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -18,7 +19,6 @@ import com.transitionseverywhere.Slide
 import com.transitionseverywhere.TransitionManager
 import fk.com.locatememobile.app.App
 import fk.com.locatememobile.app.data.entities.Location
-import fk.com.locatememobile.app.data.entities.User
 import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
 import fk.locateme.app.R
 import kotlinx.android.synthetic.main.fragment_map.*
@@ -27,12 +27,13 @@ import javax.inject.Inject
 
 class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     val TAG = this::class.java.simpleName
+
     var googleMap: GoogleMap? = null
+
     @Inject
     lateinit var presenter: MapFragmentContract.Presenter
     lateinit var userAdapter: UserAdapter
     private var isDrawerOpen: Boolean = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity.application as App).appComponent.inject(this)
@@ -66,11 +67,52 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
     }
 
     private fun setup() {
-        map_fragment_expand_button.setOnClickListener { openCloseBottomDrawer() }
-        map_fragment_add_friend_button.setOnClickListener { openAddFriendFragment() }
+        setClickListeners()
         map_fragment_friend_list_recycler_view.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         userAdapter = UserAdapter(this)
         map_fragment_friend_list_recycler_view.adapter = userAdapter
+        setSeekBarChangeListener()
+    }
+
+    private fun setClickListeners() {
+        map_fragment_bottom_drawer.setOnClickListener {}
+        map_fragment_expand_button.setOnClickListener { openCloseBottomDrawer() }
+        map_fragment_add_friend_button.setOnClickListener { openAddFriendFragment() }
+        map_fragment_seek_time_view_close.setOnClickListener { userSelectionCancelled() }
+    }
+
+    private fun setSeekBarChangeListener() {
+        map_fragment_seek_time_bar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, p2: Boolean) {
+                presenter.onSeekBarValueChanged(progress)
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar) {
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar) {
+            }
+
+        })
+    }
+
+    private fun userSelectionCancelled() {
+        presenter.userSelectionCancelled()
+        hideSeekBarView()
+        showFriendsView()
+    }
+
+    override fun showUserFriendsLocations(userFriendsLocationsInBuckets: Array<List<Location?>>, usersMarkerPairs: List<Pair<UserFriendDTO, MarkerColors>>) {
+        userFriendsLocationsInBuckets.forEach { createMarkerForLastUserLocation(it, usersMarkerPairs) }
+    }
+
+    private fun createMarkerForLastUserLocation(it: List<Location?>, userMarkerPairs: List<Pair<UserFriendDTO, MarkerColors>>) {
+        val lastLocation = it.findLast { it != null }
+        lastLocation?.let {
+            val userMarkerPair = userMarkerPairs.find { it.first.userFriendId == lastLocation.userId }
+            if (userMarkerPair != null)
+                googleMap?.addMarker(getMarkerOptions(lastLocation, userMarkerPair.first, userMarkerPair.second))
+        }
     }
 
     override fun showUserFriends(userFriendMarkerColorPairs: List<Pair<UserFriendDTO, MarkerColors>>) {
@@ -151,16 +193,39 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
         constraintSet.applyTo(main_map_fragment)
     }
 
-    private fun getMarkerOptions(location: Location, user: User): MarkerOptions? {
+    override fun showTimeSeekBarView() {
+        hideFriendsView()
+        showSeekBarView()
+    }
+
+    private fun showSeekBarView() {
+        map_fragment_seek_time_view.visibility = View.VISIBLE
+    }
+
+
+    private fun hideSeekBarView() {
+        map_fragment_seek_time_view.visibility = View.GONE
+    }
+
+    private fun hideFriendsView() {
+        map_fragment_friends_view.visibility = View.GONE
+    }
+
+
+    private fun showFriendsView() {
+        map_fragment_friends_view.visibility = View.VISIBLE
+    }
+
+    private fun getMarkerOptions(location: Location, user: UserFriendDTO, markerColors: MarkerColors): MarkerOptions? {
         return MarkerOptions()
                 .position(LatLng(location.latitude, location.longitude))
                 .title(user.manufacturer + " " + user.device)
-//                .icon(BitmapDescriptorFactory.defaultMarker(presenter.getUserMarkerColor(user).markerHue))
+                .icon(BitmapDescriptorFactory.defaultMarker(markerColors.markerHue))
     }
 
 
     override fun onUserSelected(user: UserFriendDTO) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        presenter.userSelected(user)
     }
 
     override fun onStop() {
@@ -170,5 +235,12 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
 
     override fun setToken(token: String) {
         map_fragment_token_text.text = token
+    }
+
+    override fun displaySelectedUserFriendLocation(selectedUserFriend: UserFriendDTO, location: Location?, markerColors: MarkerColors) {
+        if (location != null){
+            googleMap?.addMarker(getMarkerOptions(location, selectedUserFriend, markerColors))
+            zoomToUserLocation(location)
+        }
     }
 }

@@ -6,7 +6,6 @@ import dagger.Module
 import dagger.Provides
 import fk.com.locatememobile.app.data.Repository
 import fk.com.locatememobile.app.device.Core
-import fk.com.locatememobile.app.device.LocationSubscriptionStateListener
 import fk.com.locatememobile.app.device.SharedPreferencesRepository
 import fk.com.locatememobile.app.ui.*
 import javax.inject.Singleton

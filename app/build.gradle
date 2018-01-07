@@ -29,7 +29,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    api 'org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.60'
+    api 'org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.10'
 
     //dagger
     api 'com.google.dagger:dagger:2.12'
@@ -52,7 +52,8 @@ dependencies {
 
     // Rx java
     api 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
-    api 'io.reactivex.rxjava2:rxjava:2.0.6'
+    api 'io.reactivex.rxjava2:rxjava:2.1.8'
+    api 'io.reactivex.rxjava2:rxkotlin:2.2.0'
     api 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     //Play services

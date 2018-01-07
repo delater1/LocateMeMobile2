@@ -7,7 +7,7 @@ import fk.com.locatememobile.app.data.entities.UserFriend
 import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
 import fk.com.locatememobile.app.data.rest.services.LocationDTO
 import io.reactivex.*
-import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -42,15 +42,32 @@ class Repository(private val serverRepository: ServerRepository,
         }
     }
 
-    fun getUserLocationsSubscription(userId: Long, interval: Long): Observable<List<Location>> {
-        return Observable.create<List<Location>> { observableEmitter: ObservableEmitter<List<Location>> ->
-            serverRepository.locationEndpoint.getLocationDTOSubscription(userId, interval).subscribe(
-                    { res: List<LocationDTO> -> observableEmitter.onNext(convert(res)) },
-                    { error: Throwable -> observableEmitter.onError(error) },
-                    { observableEmitter.onComplete() }
+    fun getUserFriendsLocationsInBuckets(token: String): Observable<Array<List<Location?>>> {
+        return Observable.create { emitter: ObservableEmitter<Array<List<Location?>>> ->
+            roomDatabase.userFriendsDao().getUserFriendsDtosForToken(token).subscribe(
+                    { userFriends: List<UserFriendDTO> ->
+                        if (userFriends.isNotEmpty()) {
+                            Single.zip(getLocationSingleForEveryUser(userFriends),
+                                    Function<Array<Any>, Array<List<Location?>>> { t: Array<Any> ->
+                                        t.map { it as List<Location?> }.toTypedArray()
+                                    }).subscribe(
+                                    { userFriendsLocations: Array<List<Location?>> ->
+                                        emitter.onNext(userFriendsLocations)
+                                        emitter.onComplete()
+                                    },
+                                    { error: Throwable -> emitter.onError(error) })
+                        } else {
+                            emitter.onComplete()
+                        }
+                    }
+                    ,
+                    { error: Throwable -> emitter.onError(error) }
             )
         }
     }
+
+    private fun getLocationSingleForEveryUser(userFriends: List<UserFriendDTO>): List<Single<List<Location>>> =
+            userFriends.map { serverRepository.locationEndpoint.getBucketedUserLocationsInLast24H(it.userFriendId) }
 
     fun convert(locationDTO: List<LocationDTO>): List<Location> {
         return locationDTO.map { locationDTO ->
@@ -64,7 +81,7 @@ class Repository(private val serverRepository: ServerRepository,
     }
 
     fun addUserFriend(user: User, friendToken: String, friendAlias: String): Completable {
-        val userFriendDTO = UserFriendDTO(token = friendToken,alias =  friendAlias)
+        val userFriendDTO = UserFriendDTO(token = friendToken, alias = friendAlias)
         return Completable.create { completableEmitter: CompletableEmitter ->
             postUserFriendToServerAndSaveItInLocalDb(user, userFriendDTO, completableEmitter)
         }

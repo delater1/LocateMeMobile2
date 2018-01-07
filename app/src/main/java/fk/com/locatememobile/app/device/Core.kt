@@ -109,4 +109,8 @@ class Core {
     fun getUserFriendsAsDtos(): Flowable<List<UserFriendDTO>> {
         return repository.getUserFriendsWithAliasesFromDb(getUserToken())
     }
+
+    fun getUserFriendsLocationBuckets(): Observable<Array<List<Location?>>> {
+        return repository.getUserFriendsLocationsInBuckets(getUserToken())
+    }
 }
