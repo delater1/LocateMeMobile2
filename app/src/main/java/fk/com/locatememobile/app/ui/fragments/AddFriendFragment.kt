@@ -1,4 +1,4 @@
-package fk.com.locatememobile.app.ui
+package fk.com.locatememobile.app.ui.fragments
 
 
 import android.os.Bundle
@@ -13,6 +13,7 @@ import com.transitionseverywhere.Slide
 import com.transitionseverywhere.TransitionManager
 import com.transitionseverywhere.TransitionSet
 import fk.com.locatememobile.app.App
+import fk.com.locatememobile.app.ui.contracts.AddFriendFragmentContract
 import fk.locateme.app.R
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers

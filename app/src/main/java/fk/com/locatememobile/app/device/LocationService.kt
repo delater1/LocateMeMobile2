@@ -13,9 +13,6 @@ import fk.com.locatememobile.app.Constants.IntentExtrasKeys.LOCATION_UPDATE_INTE
 import fk.com.locatememobile.app.Constants.IntentExtrasKeys.LONGITUDE_KEY
 import fk.com.locatememobile.app.Constants.IntentExtrasKeys.TIME_KEY
 
-/**
- * Created by korpa on 22.10.2017.
- */
 class LocationService : Service() {
     val TAG = this::class.java.simpleName
     lateinit var fusedLocationProvider: FusedLocationProviderClient

@@ -9,10 +9,6 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-
-/**
- * Created by korpa on 16.10.2017.
- */
 interface LocationService {
     @GET("user/{userId}/location")
     fun getUserLocations(@Path("userId") userId: Long): Observable<List<Location>>

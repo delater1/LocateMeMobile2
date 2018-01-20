@@ -1,10 +1,7 @@
 package fk.com.locatememobile.app
 
-/**
- * Created by korpa on 04.11.2017.
- */
 object Constants {
-    val SERVER_URL = "http://192.168.1.11:8080"
+    val SERVER_URL = "http://locateMe.eu-central-1.elasticbeanstalk.com"
 
     object SharedPreferencesKeys {
         val USER_TOKEN_KEY = "user_token"

@@ -1,12 +1,10 @@
-package fk.com.locatememobile.app.ui
+package fk.com.locatememobile.app.ui.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.constraint.ConstraintSet
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.util.AttributeSet
-import android.util.Xml
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
@@ -21,10 +19,13 @@ import com.transitionseverywhere.TransitionManager
 import fk.com.locatememobile.app.App
 import fk.com.locatememobile.app.data.entities.Location
 import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
+import fk.com.locatememobile.app.ui.contracts.MapFragmentContract
+import fk.com.locatememobile.app.ui.MarkerColors
+import fk.com.locatememobile.app.ui.adapters.UserAdapter
+import fk.com.locatememobile.app.ui.UserSelectedListener
 import fk.locateme.app.R
 import kotlinx.android.synthetic.main.fragment_map.*
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.inject.Inject
 

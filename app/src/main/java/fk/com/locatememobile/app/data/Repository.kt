@@ -1,18 +1,16 @@
 package fk.com.locatememobile.app.data
 
 import android.util.Log
+import fk.com.locatememobile.app.data.db.RoomDatabase
 import fk.com.locatememobile.app.data.entities.Location
 import fk.com.locatememobile.app.data.entities.User
 import fk.com.locatememobile.app.data.entities.UserFriend
+import fk.com.locatememobile.app.data.rest.ServerRepository
 import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
-import fk.com.locatememobile.app.data.rest.services.LocationDTO
 import io.reactivex.*
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 
-/**
- * Created by korpa on 06.11.2017.
- */
 class Repository(private val serverRepository: ServerRepository,
                  private val roomDatabase: RoomDatabase) {
     val TAG = javaClass.simpleName
@@ -68,17 +66,6 @@ class Repository(private val serverRepository: ServerRepository,
 
     private fun getLocationSingleForEveryUser(userFriends: List<UserFriendDTO>): List<Single<List<Location>>> =
             userFriends.map { serverRepository.locationEndpoint.getBucketedUserLocationsInLast24H(it.userFriendId) }
-
-    fun convert(locationDTO: List<LocationDTO>): List<Location> {
-        return locationDTO.map { locationDTO ->
-            Location(locationDTO.id,
-                    locationDTO.user.id,
-                    locationDTO.time,
-                    locationDTO.latitude,
-                    locationDTO.longitude,
-                    locationDTO.accuracy)
-        }
-    }
 
     fun addUserFriend(user: User, friendToken: String, friendAlias: String): Completable {
         val userFriendDTO = UserFriendDTO(token = friendToken, alias = friendAlias)

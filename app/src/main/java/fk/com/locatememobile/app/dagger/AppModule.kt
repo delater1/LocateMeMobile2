@@ -7,12 +7,15 @@ import dagger.Provides
 import fk.com.locatememobile.app.data.Repository
 import fk.com.locatememobile.app.device.Core
 import fk.com.locatememobile.app.device.SharedPreferencesRepository
-import fk.com.locatememobile.app.ui.*
+import fk.com.locatememobile.app.ui.contracts.AddFriendFragmentContract
+import fk.com.locatememobile.app.ui.contracts.MapFragmentContract
+import fk.com.locatememobile.app.ui.contracts.StartFragmentContract
+import fk.com.locatememobile.app.ui.presenters.AddFriendFragmentPresenter
+import fk.com.locatememobile.app.ui.presenters.MapFragmentPresenter
+import fk.com.locatememobile.app.ui.presenters.StartFragmentPresenter
 import javax.inject.Singleton
 
-/**
- * Created by korpa on 04.11.2017.
- */
+
 @Module
 class AppModule(val application: Application) {
 
@@ -24,13 +27,15 @@ class AppModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun provideSharedPreferencesRepository(applicationContext: Context): SharedPreferencesRepository {
+    fun provideSharedPreferencesRepository(applicationContext: Context):
+            SharedPreferencesRepository {
         return SharedPreferencesRepository(applicationContext)
     }
 
     @Provides
     @Singleton
-    fun provideCore(applicationContext: Context, repository: Repository, sharedPreferencesRepository: SharedPreferencesRepository): Core {
+    fun provideCore(applicationContext: Context, repository: Repository,
+                    sharedPreferencesRepository: SharedPreferencesRepository): Core {
         return Core(applicationContext, repository, sharedPreferencesRepository)
     }
 

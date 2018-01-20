@@ -18,23 +18,33 @@ class SharedPreferencesRepository {
     private val applicationContext: Context
 
     fun getUserToken(): String {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val sharedPreferences =
+                PreferenceManager
+                        .getDefaultSharedPreferences(applicationContext)
         return sharedPreferences.getString(USER_TOKEN_KEY, "")
     }
 
     fun saveUserToken(token: String) {
-        val sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(applicationContext).edit()
+        val sharedPreferencesEditor =
+                PreferenceManager
+                        .getDefaultSharedPreferences(applicationContext)
+                        .edit()
         sharedPreferencesEditor.putString(USER_TOKEN_KEY, token)
         sharedPreferencesEditor.apply()
     }
 
     fun getLocationInterval(): Int {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val sharedPreferences =
+                PreferenceManager
+                        .getDefaultSharedPreferences(applicationContext)
         return sharedPreferences.getInt(LOCATION_INTERVAL_KEY, 60)
     }
 
     fun saveLocationInterval(locationInterval: Int) {
-        val sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(applicationContext).edit()
+        val sharedPreferencesEditor =
+                PreferenceManager
+                        .getDefaultSharedPreferences(applicationContext)
+                        .edit()
         sharedPreferencesEditor.putInt(LOCATION_INTERVAL_KEY, 60)
         sharedPreferencesEditor.apply()
     }

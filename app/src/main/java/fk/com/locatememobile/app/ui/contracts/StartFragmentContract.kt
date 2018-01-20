@@ -1,4 +1,4 @@
-package fk.com.locatememobile.app.ui
+package fk.com.locatememobile.app.ui.contracts
 
 /**
  * Created by FK on 28-Dec-17.

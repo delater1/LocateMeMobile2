@@ -6,11 +6,6 @@ import fk.com.locatememobile.app.dagger.AppModule
 import fk.com.locatememobile.app.dagger.DaggerAppComponent
 import fk.com.locatememobile.app.dagger.DataModule
 
-
-/**
- * Created by korpa on 30.10.2017.
- */
-
 class App: Application() {
     lateinit var appComponent: AppComponent
 

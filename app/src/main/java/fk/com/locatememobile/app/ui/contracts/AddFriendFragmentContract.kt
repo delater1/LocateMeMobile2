@@ -1,4 +1,4 @@
-package fk.com.locatememobile.app.ui
+package fk.com.locatememobile.app.ui.contracts
 
 interface AddFriendFragmentContract {
     interface View {
@@ -10,7 +10,7 @@ interface AddFriendFragmentContract {
     }
 
     interface Presenter {
-        fun register(view: AddFriendFragmentContract.View)
+        fun register(view: View)
         fun addButtonClicked()
     }
 }

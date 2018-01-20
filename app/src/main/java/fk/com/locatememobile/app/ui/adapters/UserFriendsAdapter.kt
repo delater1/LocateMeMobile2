@@ -1,4 +1,4 @@
-package fk.com.locatememobile.app.ui
+package fk.com.locatememobile.app.ui.adapters
 
 import android.content.Context
 import android.view.LayoutInflater

@@ -1,17 +1,15 @@
-package fk.com.locatememobile.app.ui
+package fk.com.locatememobile.app.ui.presenters
 
 import android.util.Log
 import fk.com.locatememobile.app.data.entities.Location
 import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
 import fk.com.locatememobile.app.device.Core
-import fk.com.locatememobile.app.device.LocationService
+import fk.com.locatememobile.app.ui.contracts.MapFragmentContract
+import fk.com.locatememobile.app.ui.MarkerColors
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-/**
- * Created by korpa on 06.11.2017.
- */
 class MapFragmentPresenter : MapFragmentContract.Presenter {
     private val TAG = javaClass.simpleName
     private val core: Core

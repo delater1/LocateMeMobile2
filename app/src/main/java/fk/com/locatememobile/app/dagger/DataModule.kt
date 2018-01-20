@@ -9,8 +9,8 @@ import fk.com.locatememobile.app.data.rest.services.UserFriendsService
 import fk.com.locatememobile.app.data.rest.services.UserService
 import fk.com.locatememobile.app.Constants
 import fk.com.locatememobile.app.data.Repository
-import fk.com.locatememobile.app.data.ServerRepository
-import fk.com.locatememobile.app.data.RoomDatabase
+import fk.com.locatememobile.app.data.rest.ServerRepository
+import fk.com.locatememobile.app.data.db.RoomDatabase
 import fk.com.locatememobile.app.data.rest.endpoints.LocationEndpoint
 import fk.com.locatememobile.app.data.rest.endpoints.UserEndpoint
 import fk.com.locatememobile.app.data.rest.endpoints.UserFriendsEndpoint
@@ -20,14 +20,10 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.sql.Time
 import java.util.concurrent.TimeUnit
 
 import javax.inject.Singleton
 
-/**
- * Created by korpa on 04.11.2017.
- */
 @Module
 class DataModule {
 

@@ -10,9 +10,6 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-/**
- * Created by korpa on 21.10.2017.
- */
 interface UserFriendsService {
 
     @GET("/user/{userId}/friends")

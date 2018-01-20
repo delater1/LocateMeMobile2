@@ -1,8 +1,8 @@
-package fk.com.locatememobile.app.ui
+package fk.com.locatememobile.app.ui.presenters
 
 import android.util.Log
-import fk.com.locatememobile.app.data.entities.Location
 import fk.com.locatememobile.app.device.Core
+import fk.com.locatememobile.app.ui.contracts.AddFriendFragmentContract
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject

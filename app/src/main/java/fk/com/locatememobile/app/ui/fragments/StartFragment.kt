@@ -1,4 +1,4 @@
-package fk.com.locatememobile.app.ui
+package fk.com.locatememobile.app.ui.fragments
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import fk.com.locatememobile.app.App
+import fk.com.locatememobile.app.ui.contracts.StartFragmentContract
 import fk.locateme.app.R
 import kotlinx.android.synthetic.main.fragment_start.*
 import javax.inject.Inject

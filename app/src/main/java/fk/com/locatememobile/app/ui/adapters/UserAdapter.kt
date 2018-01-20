@@ -1,4 +1,4 @@
-package fk.com.locatememobile.app.ui
+package fk.com.locatememobile.app.ui.adapters
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -6,8 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import fk.com.locatememobile.app.data.entities.User
 import fk.com.locatememobile.app.data.rest.dtos.UserFriendDTO
+import fk.com.locatememobile.app.ui.MarkerColors
+import fk.com.locatememobile.app.ui.UserSelectedListener
 import fk.locateme.app.R
 
 class UserAdapter : RecyclerView.Adapter<UserViewHolder> {
