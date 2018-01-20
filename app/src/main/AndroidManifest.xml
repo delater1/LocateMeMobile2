@@ -35,7 +35,8 @@
 
         <service
             android:name="fk.com.locatememobile.app.device.LocationService"
-            android:label="My Service" >
+            android:label="My Service"
+            android:launchMode="singleTop">
         </service>
     </application>
 
