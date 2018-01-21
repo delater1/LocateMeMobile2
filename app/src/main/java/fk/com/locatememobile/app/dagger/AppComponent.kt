@@ -5,6 +5,7 @@ import fk.com.locatememobile.app.device.Core
 import fk.com.locatememobile.app.device.SharedPreferencesRepository
 import fk.com.locatememobile.app.ui.fragments.AddFriendFragment
 import fk.com.locatememobile.app.ui.fragments.MapFragment
+import fk.com.locatememobile.app.ui.fragments.SettingsFragment
 import fk.com.locatememobile.app.ui.fragments.StartFragment
 import fk.com.locatememobile.app.ui.presenters.MapFragmentPresenter
 import javax.inject.Singleton
@@ -18,4 +19,5 @@ interface AppComponent {
     fun inject(target: StartFragment)
     fun inject(target: AddFriendFragment)
     fun inject(target: SharedPreferencesRepository)
+    fun inject(target: SettingsFragment)
 }

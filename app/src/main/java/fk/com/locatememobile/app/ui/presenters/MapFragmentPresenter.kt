@@ -25,6 +25,7 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
         friendColorPairs = listOf()
         userFriendsLocationsInBuckets = arrayOf()
     }
+
     override fun register(view: MapFragmentContract.View) {
         this.view = view
         view.setToken(core.getUserToken())
@@ -141,6 +142,10 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
 
     override fun onRefresh() {
         getUserFriendsLocationsInBuckets()
+    }
+
+    override fun onSettingsClicked() {
+        view?.openSettingsFragment()
     }
 }
 

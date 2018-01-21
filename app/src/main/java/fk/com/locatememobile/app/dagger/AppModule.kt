@@ -9,9 +9,11 @@ import fk.com.locatememobile.app.device.Core
 import fk.com.locatememobile.app.device.SharedPreferencesRepository
 import fk.com.locatememobile.app.ui.contracts.AddFriendFragmentContract
 import fk.com.locatememobile.app.ui.contracts.MapFragmentContract
+import fk.com.locatememobile.app.ui.contracts.SettingsFragmentContract
 import fk.com.locatememobile.app.ui.contracts.StartFragmentContract
 import fk.com.locatememobile.app.ui.presenters.AddFriendFragmentPresenter
 import fk.com.locatememobile.app.ui.presenters.MapFragmentPresenter
+import fk.com.locatememobile.app.ui.presenters.SettingsFragmentPresenter
 import fk.com.locatememobile.app.ui.presenters.StartFragmentPresenter
 import javax.inject.Singleton
 
@@ -55,5 +57,11 @@ class AppModule(val application: Application) {
     @Singleton
     fun provideAddFriendPresenter(core: Core): AddFriendFragmentContract.Presenter {
         return AddFriendFragmentPresenter(core)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSettingsPresenter(core: Core, sharedPreferencesRepository: SharedPreferencesRepository): SettingsFragmentContract.Presenter {
+        return SettingsFragmentPresenter(core, sharedPreferencesRepository)
     }
 }

@@ -101,7 +101,8 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
         map_fragment_expand_button.setOnClickListener { openCloseBottomDrawer() }
         map_fragment_add_friend_button.setOnClickListener { openAddFriendFragment() }
         map_fragment_seek_time_view_close.setOnClickListener { userSelectionCancelled() }
-        map_fragment_refresh_button.setOnClickListener({ presenter.onRefresh() })
+        map_fragment_refresh_button.setOnClickListener { presenter.onRefresh() }
+        map_fragment_settings_button.setOnClickListener { presenter.onSettingsClicked()}
     }
 
     private fun setSeekBarChangeListener() {
@@ -288,5 +289,12 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
             userMarkerMap[userFriend]?.remove()
             userMarkerMap[userFriend] = marker
         }
+    }
+
+    override fun openSettingsFragment() {
+        val fragmentTransaction = activity.supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.mainFrame, SettingsFragment())
+        fragmentTransaction.addToBackStack("SettingsFragment")
+        fragmentTransaction.commit()
     }
 }

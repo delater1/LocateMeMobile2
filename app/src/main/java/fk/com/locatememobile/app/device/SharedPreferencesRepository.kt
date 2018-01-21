@@ -2,6 +2,7 @@ package fk.com.locatememobile.app.device
 
 import android.content.Context
 import android.preference.PreferenceManager
+import fk.com.locatememobile.app.Constants.SharedPreferencesKeys.FRIENDS_LOCATION_INTERVAL_KEY
 import fk.com.locatememobile.app.Constants.SharedPreferencesKeys.LOCATION_INTERVAL_KEY
 import fk.com.locatememobile.app.Constants.SharedPreferencesKeys.USER_TOKEN_KEY
 import javax.inject.Inject
@@ -34,7 +35,7 @@ class SharedPreferencesRepository {
         val sharedPreferences =
                 PreferenceManager
                         .getDefaultSharedPreferences(applicationContext)
-        return sharedPreferences.getInt(LOCATION_INTERVAL_KEY, 60)
+        return sharedPreferences.getInt(LOCATION_INTERVAL_KEY, 60000)
     }
 
     fun saveLocationInterval(locationInterval: Int) {
@@ -42,7 +43,23 @@ class SharedPreferencesRepository {
                 PreferenceManager
                         .getDefaultSharedPreferences(applicationContext)
                         .edit()
-        sharedPreferencesEditor.putInt(LOCATION_INTERVAL_KEY, 60)
+        sharedPreferencesEditor.putInt(LOCATION_INTERVAL_KEY, locationInterval)
+        sharedPreferencesEditor.apply()
+    }
+
+    fun getFriendsLocationInterval(): Int {
+        val sharedPreferences =
+                PreferenceManager
+                        .getDefaultSharedPreferences(applicationContext)
+        return sharedPreferences.getInt(FRIENDS_LOCATION_INTERVAL_KEY, 60000)
+    }
+
+    fun saveFriendsLocationInterval(locationInterval: Int) {
+        val sharedPreferencesEditor =
+                PreferenceManager
+                        .getDefaultSharedPreferences(applicationContext)
+                        .edit()
+        sharedPreferencesEditor.putInt(FRIENDS_LOCATION_INTERVAL_KEY, locationInterval)
         sharedPreferencesEditor.apply()
     }
 }

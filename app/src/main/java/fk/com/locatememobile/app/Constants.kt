@@ -6,6 +6,7 @@ object Constants {
     object SharedPreferencesKeys {
         val USER_TOKEN_KEY = "user_token"
         val LOCATION_INTERVAL_KEY = "location_key"
+        val FRIENDS_LOCATION_INTERVAL_KEY = "friends_location_key"
     }
 
     object IntentExtrasKeys {

@@ -12,6 +12,7 @@ interface MapFragmentContract {
         fun showUserFriendsLocations(userFriendsLocationsInBuckets: Array<List<Location?>>, usersMarkerPairs: List<Pair<UserFriendDTO, MarkerColors>>)
         fun showTimeSeekBarView()
         fun displaySelectedUserFriendLocation(selectedUserFriend: UserFriendDTO, location: Location?, markerColors: MarkerColors)
+        fun openSettingsFragment()
     }
 
     interface Presenter {
@@ -21,5 +22,6 @@ interface MapFragmentContract {
         fun userSelectionCancelled()
         fun onSeekBarValueChanged(progress: Int)
         fun onRefresh()
+        fun onSettingsClicked()
     }
 }

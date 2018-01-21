@@ -48,7 +48,7 @@ class Core {
 
     fun getLocationServiceIntent(): Intent {
         val intent = Intent(applicationContext, LocationService::class.java)
-        intent.putExtra(Constants.IntentExtrasKeys.LOCATION_UPDATE_INTERVAL, 60000L)
+        intent.putExtra(Constants.IntentExtrasKeys.LOCATION_UPDATE_INTERVAL, sharedPreferencesRepository.getLocationInterval())
         return intent
     }
 
@@ -116,5 +116,10 @@ class Core {
 
     fun getUserFriendsLocationBuckets(): Observable<Array<List<Location?>>> {
         return repository.getUserFriendsLocationsInBuckets(getUserToken())
+    }
+
+    fun restartService() {
+        applicationContext.stopService(Intent(applicationContext, LocationService::class.java))
+        applicationContext.startService(getLocationServiceIntent())
     }
 }
