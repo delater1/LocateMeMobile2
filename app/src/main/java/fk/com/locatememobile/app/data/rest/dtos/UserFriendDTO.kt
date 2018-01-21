@@ -1,8 +1,5 @@
 package fk.com.locatememobile.app.data.rest.dtos
 
-/**
- * Created by FK on 01-Jan-18.
- */
 data class UserFriendDTO(
         val userId: Long = -1,
         val userFriendId: Long = -1,

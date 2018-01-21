@@ -138,5 +138,9 @@ class MapFragmentPresenter : MapFragmentContract.Presenter {
     private fun getUserLocations(userFriend: UserFriendDTO): List<Location?>? {
         return userFriendsLocationsInBuckets.find { it.find { it?.userId == userFriend.userFriendId } != null }
     }
+
+    override fun onRefresh() {
+        getUserFriendsLocationsInBuckets()
+    }
 }
 

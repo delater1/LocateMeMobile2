@@ -101,6 +101,7 @@ class MapFragment : Fragment(), MapFragmentContract.View, UserSelectedListener {
         map_fragment_expand_button.setOnClickListener { openCloseBottomDrawer() }
         map_fragment_add_friend_button.setOnClickListener { openAddFriendFragment() }
         map_fragment_seek_time_view_close.setOnClickListener { userSelectionCancelled() }
+        map_fragment_refresh_button.setOnClickListener({ presenter.onRefresh() })
     }
 
     private fun setSeekBarChangeListener() {

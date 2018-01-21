@@ -20,5 +20,6 @@ interface MapFragmentContract {
         fun userSelected(user: UserFriendDTO)
         fun userSelectionCancelled()
         fun onSeekBarValueChanged(progress: Int)
+        fun onRefresh()
     }
 }

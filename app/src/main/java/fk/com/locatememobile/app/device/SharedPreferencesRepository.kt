@@ -6,9 +6,6 @@ import fk.com.locatememobile.app.Constants.SharedPreferencesKeys.LOCATION_INTERV
 import fk.com.locatememobile.app.Constants.SharedPreferencesKeys.USER_TOKEN_KEY
 import javax.inject.Inject
 
-/**
- * Created by FK on 28-Dec-17.
- */
 class SharedPreferencesRepository {
     @Inject
     constructor(applicationContext: Context) {

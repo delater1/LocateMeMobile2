@@ -14,9 +14,6 @@ import fk.locateme.app.R
 import kotlinx.android.synthetic.main.fragment_start.*
 import javax.inject.Inject
 
-/**
- * Created by FK on 28-Dec-17.
- */
 class StartFragment : Fragment(), StartFragmentContract.View {
     private val PERMISSIONS_REQUEST_FINE_LOCATION = 111
 
@@ -35,16 +32,17 @@ class StartFragment : Fragment(), StartFragmentContract.View {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         presenter.register(this)
+        start_fragment_retry_button.setOnClickListener({ presenter.onRetry()})
     }
 
     override fun showError(errorMessage: String) {
         hideProgressBar()
-        showErrorText(errorMessage)
+        showErrorView(errorMessage)
     }
 
-    private fun showErrorText(errorMessage: String) {
+    private fun showErrorView(errorMessage: String) {
+        start_fragment_error_view.visibility = View.VISIBLE
         start_fragment_error_description.text = errorMessage
-        start_fragment_error_description.setVisibility(View.VISIBLE)
     }
 
     private fun hideProgressBar() {
@@ -77,4 +75,7 @@ class StartFragment : Fragment(), StartFragmentContract.View {
         fragmentTransaction.commit()
     }
 
+    override fun askForPermission() {
+        checkPermissions()
+    }
 }

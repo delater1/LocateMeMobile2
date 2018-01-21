@@ -13,12 +13,14 @@ interface UserFriendsDAO {
 
     @Query("SELECT u.id AS userId," +
             " uf.userFriendId AS userFriendId," +
-            " u.device AS device," +
-            " u.manufacturer AS manufacturer," +
-            " u.token AS token," +
+            " ufo.device AS device," +
+            " ufo.manufacturer AS manufacturer," +
+            " ufo.token AS token," +
             " uf.alias AS alias" +
-            " FROM Users u JOIN UserFriends uf ON u.id = uf.userId" +
-            " WHERE u.token = :token")
+            " FROM Users u " +
+            "JOIN UserFriends uf ON u.id = uf.userId " +
+            "JOIN Users ufo ON uf.userFriendId = ufo.id "  +
+            "WHERE u.token = :token")
     fun getUserFriendsDtosForToken(token: String): Flowable<List<UserFriendDTO>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
