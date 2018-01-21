@@ -20,22 +20,32 @@
             android:layout_height="45dp" />
 
         <TextView
-            android:id="@+id/user_first_name"
+            android:id="@+id/user_manufacturer"
             android:layout_gravity="center"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:text="Device"
+            android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/user_last_name"
+            android:id="@+id/user_device"
             android:layout_gravity="center"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:text="Manufactu"
+            android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/user_alias"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
